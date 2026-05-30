@@ -2605,7 +2605,7 @@
 
   <!-- ===== [SECTION: seed-data] ===== -->
   <script>
-    (function seedIfNeeded() {
+    document.addEventListener('DOMContentLoaded', function seedIfNeeded() {
       const _existing = getAllReviews();
       const _seeds = [
         {
@@ -2778,16 +2778,21 @@
           createdAt: '2026-05-19T10:00:00.000Z'
         }
       ];
-      if (!_existing.length) { saveAllReviews(_seeds); return; }
+      if (!_existing.length) {
+        saveAllReviews(_seeds);
+        renderHomeFeed();   // 씨드 주입 후 홈피드 즉시 갱신
+        return;
+      }
       // 새 시드 누락분 보완
+      let changed = false;
       ['seed_7','seed_8','seed_9'].forEach(sid => {
         if (!_existing.find(r => r.id === sid)) {
           const s = _seeds.find(x => x.id === sid);
-          if (s) _existing.push(s);
+          if (s) { _existing.push(s); changed = true; }
         }
       });
-      saveAllReviews(_existing);
-    })();
+      if (changed) saveAllReviews(_existing);
+    });
   </script>
 
   <!-- ===== [SECTION: comment-system] ===== -->
