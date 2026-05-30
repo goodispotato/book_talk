@@ -21,9 +21,23 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Inject API keys
+        env:
+          KAKAO_KEY: ${{ secrets.KAKAO_API_KEY }}
+          GROQ_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          sed -i "s|__KAKAO_API_KEY__|${{ secrets.KAKAO_API_KEY }}|g" index.html
-          sed -i "s|__GROQ_API_KEY__|${{ secrets.GROQ_API_KEY }}|g" index.html
+          cat > inject.js << 'EOF'
+          const fs = require('fs');
+          const kakao = (process.env.KAKAO_KEY || '').trim();
+          const groq  = (process.env.GROQ_KEY  || '').trim();
+          let html = fs.readFileSync('index.html', 'utf8');
+          html = html.replace("'__KAKAO_API_KEY__'", "'" + kakao + "'");
+          html = html.replace("'__GROQ_API_KEY__'",  "'" + groq  + "'");
+          fs.writeFileSync('index.html', html, 'utf8');
+          const remaining = (html.match(/__KAKAO_API_KEY__|__GROQ_API_KEY__/g) || []);
+          if (remaining.length) console.error('WARNING: 교체 안 된 플레이스홀더:', remaining);
+          else console.log('✓ 키 주입 완료');
+          EOF
+          node inject.js
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
