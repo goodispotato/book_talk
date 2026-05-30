@@ -1,0 +1,2961 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>북토크 (BookTalk)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=Noto+Sans+KR:wght@400;500;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    /* ===== [SECTION: reset-base] ===== */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --ivory:        #f8f7f4;
+      --ivory-dark:   #eeeae2;
+      --ivory-mid:    #e2dcd2;
+      --ink:          #12192c;
+      --ink-mid:      #3d506e;
+      --ink-lo:       #7a8aa8;
+      --ink-xlo:      #b0bcd0;
+      --rust:         #1e3a5f;
+      --rust-light:   #e6edf7;
+      --rust-mid:     #2d5a9e;
+      --gold:         #c9a84c;
+      --gold-light:   #fdf8ec;
+      --border:       #d8d4ca;
+      --border-light: #e8e4dc;
+      --white:        #ffffff;
+      --serif:        'Crimson Text','Noto Serif KR',Georgia,serif;
+      --sans:         'Noto Sans KR',sans-serif;
+      --radius:       4px;
+      --radius-md:    10px;
+      --shadow:       0 2px 12px rgba(18,25,44,.07);
+      --shadow-md:    0 8px 36px rgba(18,25,44,.13);
+    }
+    body{font-family:var(--serif);background:var(--ivory);color:var(--ink);line-height:1.75;font-size:17px}
+    a{text-decoration:none;color:inherit;cursor:pointer}
+    button{cursor:pointer;font-family:inherit}
+    img{display:block;max-width:100%}
+
+    /* ===== [SECTION: layout-wrapper] ===== */
+    .container{max-width:1020px;margin:0 auto;padding:0 32px}
+    .container-narrow{max-width:700px;margin:0 auto;padding:0 32px}
+
+    /* ===== [SECTION: nav-header] ===== */
+    #nav-header{
+      background:var(--ivory);
+      border-bottom:1px solid var(--border);
+      position:sticky;top:0;z-index:100;
+    }
+    .nav-top{
+      text-align:center;padding:28px 0 0;
+    }
+    .nav-logo{
+      font-family:var(--serif);font-size:2.2rem;font-weight:900;
+      letter-spacing:.08em;color:var(--ink);display:inline-block;
+      line-height:1;text-transform:uppercase;
+    }
+    .nav-logo em{font-style:normal;color:var(--rust);font-size:1em}
+    .nav-tagline{
+      font-family:var(--serif);font-style:italic;font-size:0.88rem;
+      color:var(--ink-lo);letter-spacing:.04em;margin:5px 0 16px;
+    }
+    .nav-rule{
+      border:none;border-top:3px double var(--border);margin:0;
+    }
+    .nav-links-row{
+      display:flex;align-items:center;justify-content:center;gap:0;
+      padding:8px 0;border-bottom:1px solid var(--border-light);
+      font-family:var(--sans);
+    }
+    .nav-links-row a{
+      font-size:0.75rem;font-weight:700;color:var(--ink-mid);
+      letter-spacing:.08em;text-transform:uppercase;
+      padding:6px 18px;transition:color .15s;
+    }
+    .nav-links-row a:hover{color:var(--rust)}
+    .nav-links-row .nav-sep{color:var(--border);font-size:0.75rem}
+    .nav-btn-write{
+      background:var(--rust);color:var(--white);border:none;
+      font-size:0.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+      padding:6px 16px;border-radius:var(--radius);
+      margin-left:12px;transition:background .15s;
+    }
+    .nav-btn-write:hover{background:var(--ink)}
+
+    /* ===== [SECTION: page-router] ===== */
+    .page{display:none;padding:48px 0 120px}
+    .page.active{display:block}
+
+    /* ===== [SECTION: page-home] ===== */
+    /* [SECTION: home-hero] */
+    #page-home .home-hero{
+      text-align:center;padding:72px 0 56px;
+      border-bottom:1px solid var(--border);margin-bottom:56px;
+      background:radial-gradient(ellipse 80% 50% at 50% 0%,var(--gold-light) 0%,transparent 65%);
+    }
+    #page-home .home-hero .hero-kicker{
+      display:inline-block;
+      font-family:var(--sans);font-size:0.7rem;font-weight:700;
+      letter-spacing:.15em;text-transform:uppercase;color:var(--rust);
+      border-top:1px solid var(--rust);border-bottom:1px solid var(--rust);
+      padding:4px 16px;margin-bottom:24px;
+    }
+    #page-home .home-hero h1{
+      font-family:var(--serif);font-size:3.4rem;font-weight:900;
+      line-height:1.15;letter-spacing:-.01em;color:var(--ink);margin-bottom:12px;
+    }
+    #page-home .home-hero h1 em{font-style:italic;color:var(--rust)}
+    #page-home .home-hero .hero-sub{
+      font-family:var(--serif);font-style:italic;font-size:1.1rem;
+      color:var(--ink-mid);margin-bottom:36px;
+    }
+    .hero-search-wrap{
+      display:flex;max-width:520px;margin:0 auto;
+      border:1px solid var(--border);border-radius:var(--radius);
+      background:var(--white);overflow:hidden;box-shadow:var(--shadow-md);
+    }
+    .hero-search-wrap input{
+      flex:1;border:none;outline:none;padding:13px 18px;
+      font-family:var(--serif);font-size:1rem;color:var(--ink);background:transparent;
+    }
+    .hero-search-wrap input::placeholder{color:var(--ink-xlo);font-style:italic}
+    .hero-search-wrap button{
+      background:var(--rust);color:var(--white);border:none;
+      padding:0 24px;font-family:var(--sans);font-size:0.75rem;
+      font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+      border-radius:0;transition:background .15s;
+    }
+    .hero-search-wrap button:hover{background:var(--ink)}
+
+    /* [SECTION: home-ai-banner] */
+    #page-home .home-ai-banner{
+      background:var(--ink);color:var(--white);
+      border-radius:var(--radius-md);padding:24px 32px;margin-bottom:52px;
+      display:flex;align-items:center;justify-content:space-between;gap:24px;
+    }
+    .ai-banner-eyebrow{
+      font-family:var(--sans);font-size:0.7rem;font-weight:700;
+      letter-spacing:.12em;text-transform:uppercase;color:var(--gold);
+      margin-bottom:4px;
+    }
+    .ai-banner-copy{
+      font-family:var(--serif);font-style:italic;font-size:1.05rem;opacity:.9;
+    }
+    .ai-banner-btn{
+      background:var(--gold);color:var(--ink);border:none;
+      font-family:var(--sans);font-size:0.75rem;font-weight:700;
+      letter-spacing:.08em;text-transform:uppercase;
+      padding:11px 24px;border-radius:var(--radius);flex-shrink:0;
+      transition:opacity .15s;
+    }
+    .ai-banner-btn:hover{opacity:.85}
+
+    /* [SECTION: home-section-label] */
+    .section-head{
+      display:flex;align-items:baseline;justify-content:space-between;
+      margin-bottom:28px;padding-bottom:12px;
+      border-bottom:2px solid var(--ink);
+    }
+    .section-head h2{
+      font-family:var(--sans);font-size:0.72rem;font-weight:700;
+      letter-spacing:.15em;text-transform:uppercase;color:var(--ink);
+    }
+    .section-head a{
+      font-family:var(--sans);font-size:0.7rem;color:var(--ink-lo);
+      letter-spacing:.06em;
+    }
+    .section-head a:hover{color:var(--rust)}
+
+    /* [SECTION: home-latest-reviews] */
+    .review-feed-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+
+    /* ===== [SECTION: card-review] ===== */
+    .card-review{cursor:pointer;border-bottom:1px solid var(--border-light);padding-bottom:32px}
+    .card-review:hover .review-title{color:var(--rust)}
+    .card-review-book{
+      display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;
+    }
+    .book-thumb-sm{
+      width:42px;height:58px;border-radius:var(--radius);flex-shrink:0;
+      object-fit:cover;border:1px solid var(--border);
+    }
+    .book-thumb-placeholder{
+      width:42px;height:58px;border-radius:var(--radius);flex-shrink:0;
+      background:var(--ivory-mid);border:1px solid var(--border);
+      display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+    }
+    .book-title-sm{font-family:var(--sans);font-size:0.8rem;font-weight:700;line-height:1.3}
+    .book-author-sm{font-family:var(--sans);font-size:0.72rem;color:var(--ink-lo);margin-top:2px}
+    .card-review .review-title{
+      font-family:var(--serif);font-size:1.18rem;font-weight:700;
+      line-height:1.35;margin-bottom:6px;transition:color .15s;
+    }
+    .star-row{display:flex;gap:1px;margin-bottom:10px}
+    .star{font-size:0.82rem;color:var(--gold)}
+    .star.empty{color:var(--border)}
+    .card-review .review-preview{
+      font-family:var(--serif);font-size:0.95rem;color:var(--ink-mid);
+      line-height:1.75;
+      display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+    }
+    .card-review-footer{
+      display:flex;gap:16px;align-items:center;margin-top:14px;
+      font-family:var(--sans);font-size:0.72rem;color:var(--ink-lo);
+    }
+    .author-chip{display:flex;align-items:center;gap:5px}
+    .avatar-xs{
+      width:20px;height:20px;border-radius:50%;
+      background:var(--rust-light);color:var(--rust);
+      font-size:0.62rem;font-weight:700;display:flex;align-items:center;justify-content:center;
+      font-family:var(--sans);
+    }
+
+    /* ===== [SECTION: page-search] ===== */
+    #page-search .search-page-header{
+      text-align:center;padding:48px 0 36px;border-bottom:1px solid var(--border);margin-bottom:40px;
+    }
+    #page-search .search-page-header h1{
+      font-family:var(--serif);font-size:2rem;font-weight:900;margin-bottom:24px;letter-spacing:-.01em;
+    }
+    .search-results-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+
+    /* ===== [SECTION: card-book] ===== */
+    .card-book{cursor:pointer;transition:opacity .15s}
+    .card-book:hover{opacity:.8}
+    .card-book .book-cover-wrap{
+      aspect-ratio:2/3;background:var(--ivory-mid);border:1px solid var(--border);
+      border-radius:var(--radius);overflow:hidden;margin-bottom:12px;
+      display:flex;align-items:center;justify-content:center;font-size:2.5rem;
+    }
+    .card-book .book-cover-wrap img{width:100%;height:100%;object-fit:cover}
+    .card-book .book-title{font-family:var(--serif);font-size:0.97rem;font-weight:700;margin-bottom:3px;line-height:1.3}
+    .card-book .book-author{font-family:var(--sans);font-size:0.75rem;color:var(--ink-mid);margin-bottom:2px}
+    .card-book .book-publisher{font-family:var(--sans);font-size:0.7rem;color:var(--ink-lo)}
+
+    /* ===== [SECTION: page-book-detail] ===== */
+    #page-book-detail .book-hero{
+      display:flex;gap:40px;align-items:flex-start;padding-bottom:48px;
+      border-bottom:1px solid var(--border);margin-bottom:48px;
+    }
+    #page-book-detail .book-cover-lg{
+      width:160px;flex-shrink:0;
+    }
+    #page-book-detail .book-cover-lg .cover-img{
+      width:160px;height:226px;border-radius:var(--radius);
+      border:1px solid var(--border);background:var(--ivory-mid);
+      display:flex;align-items:center;justify-content:center;font-size:3rem;
+      box-shadow:4px 4px 0 var(--ivory-mid),5px 5px 0 var(--border);
+    }
+    .book-genre-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+    .genre-tag{
+      font-family:var(--sans);font-size:0.65rem;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;
+      color:var(--ink-mid);border:1px solid var(--border);
+      border-radius:var(--radius);padding:3px 8px;
+    }
+    #page-book-detail .book-desc h1{
+      font-family:var(--serif);font-size:2rem;font-weight:900;
+      letter-spacing:-.02em;line-height:1.2;margin-bottom:8px;
+    }
+    #page-book-detail .book-byline{
+      font-family:var(--serif);font-style:italic;font-size:1rem;
+      color:var(--ink-mid);margin-bottom:16px;
+    }
+    #page-book-detail .book-synopsis{
+      font-family:var(--serif);font-size:0.97rem;color:var(--ink-mid);
+      line-height:1.85;margin-bottom:24px;
+      display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;
+    }
+    .book-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn-write{
+      background:var(--rust);color:var(--white);border:none;
+      font-family:var(--sans);font-size:0.72rem;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;
+      padding:10px 22px;border-radius:var(--radius);transition:background .15s;
+    }
+    .btn-write:hover{background:var(--ink)}
+    .btn-secondary{
+      background:transparent;color:var(--ink-mid);
+      border:1px solid var(--border);
+      font-family:var(--sans);font-size:0.72rem;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;
+      padding:10px 22px;border-radius:var(--radius);transition:border-color .15s;
+    }
+    .btn-secondary:hover{border-color:var(--ink-mid)}
+
+    /* [SECTION: reviews-sort-bar] */
+    .reviews-toolbar{
+      display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;
+    }
+    .reviews-toolbar .toolbar-title{
+      font-family:var(--sans);font-size:0.72rem;font-weight:700;
+      letter-spacing:.12em;text-transform:uppercase;color:var(--ink);
+    }
+    .sort-btns{display:flex;gap:6px}
+    .sort-btns button{
+      background:none;border:1px solid var(--border);border-radius:var(--radius);
+      padding:5px 12px;font-family:var(--sans);font-size:0.7rem;color:var(--ink-lo);
+      font-weight:700;letter-spacing:.06em;transition:all .15s;
+    }
+    .sort-btns button.active{background:var(--ink);border-color:var(--ink);color:var(--white)}
+
+    /* ===== [SECTION: form-write-review] ===== */
+    #form-write-review{
+      background:var(--white);border:1px solid var(--border);
+      border-top:3px solid var(--rust);
+      padding:28px 32px;margin-bottom:40px;box-shadow:var(--shadow);
+    }
+    #form-write-review .form-head{
+      font-family:var(--sans);font-size:0.72rem;font-weight:700;
+      letter-spacing:.12em;text-transform:uppercase;color:var(--rust);
+      margin-bottom:20px;display:flex;align-items:center;gap:8px;
+    }
+    .form-field{margin-bottom:18px}
+    .form-field label{
+      display:block;font-family:var(--sans);font-size:0.7rem;
+      font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+      color:var(--ink-mid);margin-bottom:7px;
+    }
+    .form-field input[type="text"],
+    .form-field input[type="password"],
+    .form-field textarea{
+      width:100%;padding:11px 14px;
+      border:1px solid var(--border);border-radius:var(--radius);
+      font-family:var(--serif);font-size:1rem;color:var(--ink);
+      background:var(--ivory);outline:none;resize:vertical;
+      transition:border-color .15s,box-shadow .15s;
+    }
+    .form-field input:focus,.form-field textarea:focus{
+      border-color:var(--rust);box-shadow:0 0 0 3px var(--rust-light);
+    }
+    .form-field textarea{min-height:140px}
+    /* ── 서평 폼 책 선택 칩 ── */
+    .review-book-chip-wrap{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 12px;background:var(--ivory-dark);
+      border:1px solid var(--border);border-radius:var(--radius);
+    }
+    .review-book-chip-thumb{width:34px;height:50px;object-fit:cover;border-radius:2px;flex-shrink:0;}
+    .review-book-chip-info{flex:1;min-width:0;}
+    .review-book-chip-title{
+      font-family:var(--serif);font-size:0.95rem;font-weight:700;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .review-book-chip-author{font-family:var(--sans);font-size:0.72rem;color:var(--ink-lo);margin-top:3px;}
+    .review-book-chip-change{
+      flex-shrink:0;background:none;border:1px solid var(--border);border-radius:var(--radius);
+      padding:5px 12px;font-family:var(--sans);font-size:0.65rem;font-weight:700;
+      letter-spacing:.06em;text-transform:uppercase;color:var(--ink-lo);
+      cursor:pointer;transition:border-color .15s,color .15s;
+    }
+    .review-book-chip-change:hover{border-color:var(--rust);color:var(--rust);}
+    .review-book-search-row{position:relative;}
+    .review-book-search-row input{
+      width:100%;box-sizing:border-box;
+      padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius);
+      font-family:var(--serif);font-size:1rem;color:var(--ink);
+      background:var(--ivory);outline:none;transition:border-color .15s;
+    }
+    .review-book-search-row input:focus{border-color:var(--rust);box-shadow:0 0 0 3px var(--rust-light);}
+    /* ── 별점 입력 ── */
+    .star-input-row{display:flex;gap:6px}
+    .star-input-row span{
+      font-size:1.6rem;cursor:pointer;color:var(--border);transition:color .1s,transform .1s;
+    }
+    .star-input-row span.active{color:var(--gold);transform:scale(1.1)}
+    .form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border-light)}
+    .btn-cancel{
+      background:none;border:1px solid var(--border);border-radius:var(--radius);
+      padding:9px 18px;font-family:var(--sans);font-size:0.7rem;font-weight:700;
+      letter-spacing:.08em;text-transform:uppercase;color:var(--ink-lo);
+      transition:background .15s;
+    }
+    .btn-cancel:hover{background:var(--ivory-dark)}
+    .btn-submit{
+      background:var(--rust);color:var(--white);border:none;
+      border-radius:var(--radius);padding:9px 24px;
+      font-family:var(--sans);font-size:0.7rem;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;transition:background .15s;
+    }
+    .btn-submit:hover{background:var(--ink)}
+
+    /* ===== [SECTION: page-review-detail] ===== */
+    #page-review-detail .back-link{
+      display:inline-flex;align-items:center;gap:6px;
+      font-family:var(--sans);font-size:0.7rem;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;color:var(--ink-lo);
+      margin-bottom:40px;transition:color .15s;
+      border-bottom:1px solid transparent;
+    }
+    #page-review-detail .back-link:hover{color:var(--rust);border-bottom-color:var(--rust)}
+    #page-review-detail .review-book-chip{
+      display:inline-flex;align-items:center;gap:8px;
+      font-family:var(--sans);font-size:0.72rem;color:var(--ink-lo);
+      background:var(--ivory-dark);border:1px solid var(--border);
+      border-radius:var(--radius);padding:5px 12px;margin-bottom:20px;
+    }
+    .book-chip-thumb{
+      width:20px;height:28px;border-radius:2px;
+      background:var(--ivory-mid);border:1px solid var(--border);
+      display:flex;align-items:center;justify-content:center;font-size:0.65rem;
+    }
+    #page-review-detail .review-full-title{
+      font-family:var(--serif);font-size:2.4rem;font-weight:900;
+      line-height:1.2;letter-spacing:-.02em;margin-bottom:16px;
+    }
+    #page-review-detail .review-rule{
+      border:none;border-top:3px double var(--border);margin:0 0 16px;
+    }
+    #page-review-detail .review-meta-row{
+      display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+      padding-bottom:28px;border-bottom:1px solid var(--border);
+      font-family:var(--sans);font-size:0.72rem;color:var(--ink-lo);
+    }
+    .author-chip-md{display:flex;align-items:center;gap:7px}
+    .avatar-sm{
+      width:26px;height:26px;border-radius:50%;
+      background:var(--rust-light);color:var(--rust);
+      font-size:0.7rem;font-weight:700;
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--sans);
+    }
+
+    /* [SECTION: review-full-body] */
+    #page-review-detail .review-full-body{
+      padding:36px 0;border-bottom:1px solid var(--border);
+    }
+    #page-review-detail .review-full-body p{
+      font-family:var(--serif);font-size:1.1rem;line-height:1.95;
+      color:var(--ink);margin-bottom:1.5em;
+    }
+    #page-review-detail .review-full-body p:last-child{margin-bottom:0}
+    #page-review-detail .review-full-body p:first-child::first-letter{
+      font-family:var(--serif);font-size:4.2rem;font-weight:900;
+      float:left;line-height:.75;margin:6px 8px -4px 0;
+      color:var(--rust);
+    }
+
+    /* [SECTION: like-action-row] */
+    #page-review-detail .like-row{
+      display:flex;align-items:center;gap:12px;padding:24px 0;
+      border-bottom:1px solid var(--border-light);
+    }
+    .btn-like{
+      display:inline-flex;align-items:center;gap:8px;
+      background:transparent;color:var(--ink-mid);
+      border:1px solid var(--border);border-radius:var(--radius);
+      padding:9px 20px;font-family:var(--sans);font-size:0.72rem;
+      font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+      transition:all .15s;
+    }
+    .btn-like:hover,.btn-like.liked{
+      background:var(--rust-light);border-color:var(--rust);color:var(--rust);
+    }
+
+    /* ===== [SECTION: section-comments] ===== */
+    #section-comments{padding-top:28px}
+    #section-comments .comments-header{
+      font-family:var(--sans);font-size:0.72rem;font-weight:700;
+      letter-spacing:.12em;text-transform:uppercase;color:var(--ink);
+      margin-bottom:24px;display:flex;align-items:center;gap:8px;
+    }
+    #section-comments .comment-count{
+      background:var(--ivory-dark);color:var(--ink-lo);
+      border:1px solid var(--border);border-radius:99px;
+      padding:1px 8px;font-size:0.68rem;font-weight:700;
+    }
+    #section-comments .comment-form{
+      display:flex;gap:10px;margin-bottom:28px;
+    }
+    #section-comments .comment-form input{
+      flex:1;padding:10px 14px;
+      border:1px solid var(--border);border-radius:var(--radius);
+      font-family:var(--serif);font-size:0.97rem;color:var(--ink);
+      background:var(--white);outline:none;
+      transition:border-color .15s;
+    }
+    #section-comments .comment-form input:focus{border-color:var(--rust)}
+    #section-comments .comment-form button{
+      background:var(--ink);color:var(--white);border:none;
+      border-radius:var(--radius);padding:0 18px;
+      font-family:var(--sans);font-size:0.7rem;font-weight:700;
+      letter-spacing:.08em;text-transform:uppercase;
+      transition:background .15s;
+    }
+    #section-comments .comment-form button:hover{background:var(--rust)}
+    .comment-item{
+      display:flex;gap:12px;padding:18px 0;border-bottom:1px solid var(--border-light);
+    }
+    .comment-body .comment-author{
+      font-family:var(--sans);font-size:0.78rem;font-weight:700;
+      color:var(--ink);margin-bottom:4px;
+    }
+    .comment-body .comment-content{
+      font-family:var(--serif);font-size:0.97rem;color:var(--ink);line-height:1.7;
+    }
+    .comment-body .comment-time{
+      font-family:var(--sans);font-size:0.68rem;color:var(--ink-lo);
+    }
+    .comment-actions{display:flex;align-items:center;gap:14px;margin-top:8px;}
+    .btn-comment-like,.btn-comment-reply{
+      background:none;border:none;padding:0;
+      font-family:var(--sans);font-size:0.68rem;font-weight:700;
+      letter-spacing:.04em;color:var(--ink-lo);cursor:pointer;
+      display:inline-flex;align-items:center;gap:4px;transition:color .15s;
+    }
+    .btn-comment-like:hover,.btn-comment-like.liked{color:var(--rust);}
+    .btn-comment-reply:hover{color:var(--ink);}
+    .comment-replies{
+      margin-left:40px;border-left:2px solid var(--border-light);
+      padding-left:16px;margin-top:4px;
+    }
+    .reply-form{display:flex;gap:8px;margin:10px 0 6px;}
+    .reply-form input{
+      flex:1;padding:7px 12px;border:1px solid var(--border);
+      border-radius:var(--radius);font-family:var(--serif);font-size:0.9rem;
+      color:var(--ink);background:var(--white);outline:none;transition:border-color .15s;
+    }
+    .reply-form input:focus{border-color:var(--rust);}
+    .reply-form button{
+      background:var(--ink);color:var(--white);border:none;
+      border-radius:var(--radius);padding:0 14px;
+      font-family:var(--sans);font-size:0.68rem;font-weight:700;
+      letter-spacing:.06em;text-transform:uppercase;transition:background .15s;white-space:nowrap;
+    }
+    .reply-form button:hover{background:var(--rust);}
+
+    /* ===== [SECTION: page-ai-recommend] ===== */
+    #page-ai-recommend .ai-hero{
+      text-align:center;padding:64px 0 48px;margin-bottom:48px;
+      border-bottom:1px solid var(--border);
+    }
+    #page-ai-recommend .ai-hero .ai-kicker{
+      font-family:var(--sans);font-size:0.7rem;font-weight:700;
+      letter-spacing:.15em;text-transform:uppercase;color:var(--gold);
+      display:inline-block;padding:4px 16px;
+      border-top:1px solid var(--gold);border-bottom:1px solid var(--gold);
+      margin-bottom:22px;
+    }
+    #page-ai-recommend .ai-hero h1{
+      font-family:var(--serif);font-size:2.6rem;font-weight:900;
+      letter-spacing:-.02em;line-height:1.2;margin-bottom:12px;
+    }
+    #page-ai-recommend .ai-hero h1 em{font-style:italic;color:var(--rust)}
+    #page-ai-recommend .ai-hero p{
+      font-family:var(--serif);font-style:italic;font-size:1.05rem;color:var(--ink-mid);
+    }
+
+    /* [SECTION: ai-input-form] */
+    #page-ai-recommend .ai-form-card{
+      background:var(--white);border:1px solid var(--border);
+      border-top:3px solid var(--ink);
+      padding:32px;max-width:560px;margin:0 auto 56px;box-shadow:var(--shadow);
+    }
+    #page-ai-recommend .ai-form-card .form-head{
+      font-family:var(--sans);font-size:0.72rem;font-weight:700;
+      letter-spacing:.12em;text-transform:uppercase;color:var(--ink);margin-bottom:24px;
+    }
+    .book-input-slot{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .slot-number{
+      width:24px;height:24px;border-radius:50%;flex-shrink:0;
+      background:var(--ivory-dark);border:1px solid var(--border);
+      font-family:var(--sans);font-size:0.7rem;font-weight:700;color:var(--ink-mid);
+      display:flex;align-items:center;justify-content:center;
+    }
+    .book-input-slot input{
+      flex:1;padding:10px 14px;
+      border:1px solid var(--border);border-radius:var(--radius);
+      font-family:var(--serif);font-size:1rem;color:var(--ink);
+      background:var(--ivory);outline:none;transition:border-color .15s;
+    }
+    .book-input-slot input:focus{border-color:var(--rust)}
+    .btn-add-slot{
+      width:100%;background:none;border:1px dashed var(--border);
+      border-radius:var(--radius);padding:10px;
+      font-family:var(--sans);font-size:0.7rem;font-weight:700;
+      letter-spacing:.08em;color:var(--ink-lo);margin:4px 0 20px;
+      transition:border-color .15s,color .15s;
+    }
+    .btn-add-slot:hover{border-color:var(--rust);color:var(--rust)}
+    .btn-ai-go{
+      width:100%;background:var(--ink);color:var(--white);border:none;
+      border-radius:var(--radius);padding:13px;
+      font-family:var(--sans);font-size:0.75rem;font-weight:700;
+      letter-spacing:.12em;text-transform:uppercase;transition:background .15s;
+    }
+    .btn-ai-go:hover{background:var(--rust)}
+
+    /* [SECTION: ai-results-area] */
+    #ai-results-area .results-section-head{
+      text-align:center;margin-bottom:32px;
+    }
+    #ai-results-area .results-section-head h2{
+      font-family:var(--serif);font-size:1.5rem;font-weight:900;margin-bottom:4px;
+    }
+    #ai-results-area .results-section-head p{
+      font-family:var(--serif);font-style:italic;font-size:0.9rem;color:var(--ink-lo);
+    }
+    .ai-result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+
+    /* ===== [SECTION: card-ai-result] ===== */
+    .card-ai-result{text-align:center;cursor:pointer;transition:opacity .15s}
+    .card-ai-result:hover{opacity:.8}
+    .ai-book-cover{
+      width:88px;height:124px;border-radius:var(--radius);margin:0 auto 14px;
+      background:var(--ivory-mid);border:1px solid var(--border);
+      display:flex;align-items:center;justify-content:center;font-size:2.2rem;
+      box-shadow:3px 3px 0 var(--ivory-mid),4px 4px 0 var(--border);
+    }
+    .card-ai-result .ai-book-title{
+      font-family:var(--serif);font-size:1rem;font-weight:700;margin-bottom:3px;
+    }
+    .card-ai-result .ai-book-author{
+      font-family:var(--sans);font-size:0.72rem;color:var(--ink-lo);margin-bottom:12px;
+    }
+    .card-ai-result .ai-reason{
+      font-family:var(--serif);font-style:italic;font-size:0.85rem;
+      color:var(--ink-mid);line-height:1.55;
+      border-top:1px solid var(--border-light);padding-top:12px;
+    }
+
+    /* ===== [SECTION: page-profile] ===== */
+    #page-profile .profile-hero{
+      border-bottom:1px solid var(--border);padding-bottom:40px;margin-bottom:40px;
+      display:flex;align-items:center;gap:28px;
+    }
+    #page-profile .profile-avatar{
+      width:80px;height:80px;border-radius:50%;flex-shrink:0;
+      background:var(--ivory-dark);border:1px solid var(--border);
+      display:flex;align-items:center;justify-content:center;font-size:2rem;
+    }
+    #page-profile .profile-info h2{
+      font-family:var(--serif);font-size:1.6rem;font-weight:900;margin-bottom:2px;
+    }
+    #page-profile .profile-info .join-date{
+      font-family:var(--serif);font-style:italic;font-size:0.88rem;
+      color:var(--ink-lo);margin-bottom:14px;
+    }
+    #page-profile .profile-stats{display:flex;gap:24px}
+    .stat-item{text-align:center}
+    .stat-item .stat-val{
+      display:block;font-family:var(--serif);font-size:1.5rem;
+      font-weight:900;color:var(--rust);line-height:1;margin-bottom:2px;
+    }
+    .stat-item .stat-lbl{
+      font-family:var(--sans);font-size:0.65rem;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;color:var(--ink-lo);
+    }
+
+    /* [SECTION: profile-tab-nav] */
+    #page-profile .profile-tabs{
+      display:flex;gap:0;border-bottom:2px solid var(--ink);margin-bottom:32px;
+    }
+    #page-profile .profile-tabs button{
+      background:none;border:none;border-bottom:2px solid transparent;
+      padding:10px 20px;margin-bottom:-2px;
+      font-family:var(--sans);font-size:0.72rem;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;color:var(--ink-lo);
+      transition:color .15s;
+    }
+    #page-profile .profile-tabs button.active{
+      color:var(--ink);border-bottom-color:var(--rust);
+    }
+
+    /* ===== [SECTION: footer-bottom] ===== */
+    #footer-bottom{
+      background:var(--ink);color:rgba(255,255,255,.45);
+      padding:36px 0;
+    }
+    .footer-inner{
+      display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+    }
+    .footer-logo{
+      font-family:var(--serif);font-size:1.1rem;font-weight:900;
+      letter-spacing:.06em;color:rgba(255,255,255,.9);
+    }
+    .footer-logo em{font-style:normal;color:var(--gold)}
+    .footer-copy{font-family:var(--sans);font-size:0.7rem;letter-spacing:.05em}
+
+    /* ===== [SECTION: placeholder-utils] ===== */
+    .section-divider{border:none;border-top:1px solid var(--border);margin:32px 0}
+
+    /* ===== [SECTION: page-also-read] ===== */
+    #page-also-read .ar-hero{
+      text-align:center;padding:64px 0 48px;
+      border-bottom:1px solid var(--border);margin-bottom:48px;
+      background:radial-gradient(ellipse 80% 50% at 50% 0%,var(--rust-light) 0%,transparent 65%);
+    }
+    #page-also-read .ar-hero .ai-kicker{
+      display:inline-block;font-family:var(--sans);font-size:0.7rem;font-weight:700;
+      letter-spacing:.18em;text-transform:uppercase;color:var(--rust);
+      border:1px solid var(--rust-light);border-radius:99px;padding:4px 14px;margin-bottom:18px;
+    }
+    #page-also-read .ar-hero h1{
+      font-family:var(--serif);font-size:2.4rem;font-weight:900;line-height:1.25;
+      letter-spacing:-.01em;margin-bottom:12px;
+    }
+    #page-also-read .ar-hero h1 em{font-style:normal;color:var(--rust);}
+    #page-also-read .ar-hero p{
+      font-family:var(--serif);font-style:italic;font-size:1rem;color:var(--ink-lo);
+    }
+    .ar-my-books{
+      margin-bottom:40px;padding:20px 24px;
+      background:var(--white);border:1px solid var(--border);border-radius:var(--radius-md);
+    }
+    .ar-my-books-label{
+      font-family:var(--sans);font-size:0.68rem;font-weight:700;letter-spacing:.12em;
+      text-transform:uppercase;color:var(--ink-lo);margin-bottom:12px;
+    }
+    .ar-my-books-list{display:flex;flex-wrap:wrap;gap:8px;}
+    .ar-book-chip{
+      font-family:var(--serif);font-size:0.88rem;
+      background:var(--ivory-dark);border:1px solid var(--border);
+      border-radius:99px;padding:4px 14px;color:var(--ink);
+    }
+    .ar-section-head{
+      font-family:var(--sans);font-size:0.68rem;font-weight:700;
+      letter-spacing:.14em;text-transform:uppercase;color:var(--ink-lo);
+      margin-bottom:24px;
+    }
+    .ar-empty{
+      text-align:center;padding:56px 0;font-family:var(--serif);
+      font-style:italic;color:var(--ink-lo);
+    }
+    .ar-empty strong{display:block;font-size:1.1rem;margin-bottom:8px;color:var(--ink);}
+
+    /* ===== [SECTION: auth-modal] ===== */
+    .auth-overlay{position:fixed;inset:0;background:rgba(26,21,16,.55);z-index:200;}
+    .auth-card{
+      position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:201;
+      background:var(--white);width:380px;max-width:calc(100vw - 40px);
+      border-top:3px solid var(--ink);box-shadow:var(--shadow-md);padding:36px 36px 32px;
+    }
+    .auth-tabs{display:flex;gap:0;margin-bottom:24px;border-bottom:2px solid var(--ink);}
+    .auth-tabs button{
+      background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;
+      padding:8px 20px;font-family:var(--sans);font-size:0.72rem;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;color:var(--ink-lo);transition:color .15s;
+    }
+    .auth-tabs button.active{color:var(--ink);border-bottom-color:var(--rust);}
+    .auth-close{
+      position:absolute;top:14px;right:16px;background:none;border:none;
+      font-size:1.1rem;color:var(--ink-lo);line-height:1;transition:color .15s;padding:4px;
+    }
+    .auth-close:hover{color:var(--ink);}
+    .auth-error{font-family:var(--sans);font-size:0.72rem;color:var(--rust);margin-bottom:12px;min-height:1.2em;}
+
+    /* ===== [SECTION: write-review-modal] ===== */
+    .write-overlay{position:fixed;inset:0;background:rgba(26,21,16,.55);z-index:200;}
+    .write-card{
+      position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:201;
+      background:var(--white);width:560px;max-width:calc(100vw - 32px);
+      max-height:90vh;overflow-y:auto;
+      border-top:3px solid var(--ink);box-shadow:var(--shadow-md);
+      padding:32px 36px 28px;
+    }
+    .write-card-header{
+      display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;
+    }
+    .write-card-title{
+      font-family:var(--sans);font-size:0.72rem;font-weight:700;
+      letter-spacing:.12em;text-transform:uppercase;color:var(--ink);
+    }
+    .write-card .form-field textarea{min-height:120px;}
+    /* 토스트 알림 */
+    #toast{
+      position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);
+      background:var(--ink);color:var(--white);
+      font-family:var(--sans);font-size:0.78rem;font-weight:700;letter-spacing:.05em;
+      padding:12px 28px;border-radius:99px;box-shadow:var(--shadow-md);
+      opacity:0;transition:opacity .25s,transform .25s;z-index:500;pointer-events:none;
+    }
+    #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+    /* 홈 히어로 서평쓰기 버튼 */
+    .hero-write-btn{
+      margin-top:14px;background:none;border:1px solid var(--ink-mid);
+      color:var(--ink-mid);border-radius:var(--radius);
+      padding:8px 22px;font-family:var(--sans);font-size:0.72rem;font-weight:700;
+      letter-spacing:.08em;text-transform:uppercase;cursor:pointer;
+      transition:border-color .15s,color .15s;
+    }
+    .hero-write-btn:hover{border-color:var(--rust);color:var(--rust);}
+
+    #nav-auth-area{display:block;}
+    .nav-top{position:relative;}
+    #nav-auth-area{position:absolute;right:0;top:50%;transform:translateY(-50%);white-space:nowrap;}
+
+    /* ===== [SECTION: navy-theme-overrides] ===== */
+
+    /* -- 다크 네이비 헤더 -- */
+    #nav-header{background:var(--ink);border-bottom:none;}
+    .nav-logo{color:var(--ivory);}
+    .nav-logo em{color:var(--gold);}
+    .nav-tagline{color:rgba(248,247,244,.4);}
+    .nav-rule{border-top-color:rgba(255,255,255,.09);}
+    .nav-links-row{background:var(--ink);border-bottom-color:rgba(255,255,255,.08);}
+    .nav-links-row a{color:rgba(248,247,244,.6);}
+    .nav-links-row a:hover{color:var(--gold);}
+    .nav-links-row .nav-sep{color:rgba(255,255,255,.18);}
+    .nav-btn-write{background:var(--gold);color:var(--ink);}
+    .nav-btn-write:hover{background:#dbb85a;color:var(--ink);}
+    #nav-auth-area a{color:rgba(248,247,244,.6)!important;}
+    #nav-auth-area a:hover{color:var(--gold)!important;}
+    #nav-auth-area span{color:var(--gold)!important;font-size:.75rem!important;}
+
+    /* -- 카드 (화이트 + 미묘한 그림자) -- */
+    .card-review{
+      background:var(--white);border:1px solid var(--border-light);
+      border-radius:var(--radius-md);padding:24px;
+      box-shadow:var(--shadow);transition:box-shadow .2s,transform .2s;
+    }
+    .card-review:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
+    .review-feed-grid{gap:24px;}
+
+    /* -- 책 카드 -- */
+    .card-book{background:var(--white);border-radius:var(--radius-md);padding:0 0 12px;
+      box-shadow:var(--shadow);transition:box-shadow .2s,transform .2s;}
+    .card-book:hover{opacity:1;box-shadow:var(--shadow-md);transform:translateY(-3px);}
+    .card-book .book-cover-wrap{border-radius:var(--radius-md) var(--radius-md) 0 0;border:none;margin-bottom:12px;}
+    .card-book .book-title{padding:0 14px;}
+    .card-book .book-author{padding:0 14px;}
+    .card-book .book-publisher{padding:0 14px;}
+
+    /* -- 별점 골드 -- */
+    .star{color:var(--gold);}
+
+    /* -- 홈 히어로 -- */
+    #page-home .home-hero{
+      background:linear-gradient(150deg,var(--gold-light) 0%,var(--ivory) 55%);
+    }
+
+    /* -- 섹션 헤드 미니멀 -- */
+    .section-head{border-bottom:1px solid var(--border);margin-bottom:32px;}
+    .section-head h2{font-size:.68rem;letter-spacing:.2em;color:var(--ink-lo);}
+
+    /* -- 폼 -- */
+    #form-write-review{border-top-color:var(--ink);}
+    .form-field input:focus,.form-field textarea:focus{
+      border-color:var(--rust);box-shadow:0 0 0 3px var(--rust-light);
+    }
+
+    /* -- 인라인 버튼 -- */
+    .btn-write,.btn-submit{background:var(--ink);color:var(--white);}
+    .btn-write:hover,.btn-submit:hover{background:var(--rust);}
+    .btn-ai-go{background:var(--ink);}
+    .btn-ai-go:hover{background:var(--rust);}
+    .btn-like.liked,.btn-like:hover{
+      background:var(--rust-light);border-color:var(--rust);color:var(--rust);
+    }
+
+    /* -- 프로필 통계 색상 -- */
+    .stat-item .stat-val{color:var(--ink);}
+
+    /* -- 리뷰 상세 드롭캡 -- */
+    #page-review-detail .review-full-body p:first-child::first-letter{color:var(--ink);}
+
+    /* -- 인증 모달 탭 active -- */
+    .auth-tabs button.active{color:var(--ink);border-bottom-color:var(--gold);}
+
+    /* -- 푸터 -- */
+    #footer-bottom{background:var(--ink);}
+    .footer-logo em{color:var(--gold);}
+
+    /* ===== [SECTION: search-autocomplete] ===== */
+    .autocomplete-wrap{position:relative;max-width:520px;margin:0 auto;}
+    .autocomplete-wrap .hero-search-wrap{max-width:100%;margin:0;}
+    .search-dropdown{
+      display:none;position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:80;
+      background:var(--white);border:1px solid var(--border);
+      border-radius:var(--radius-md);box-shadow:var(--shadow-md);
+      max-height:380px;overflow-y:auto;
+    }
+    .suggest-item{
+      display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;
+      border-bottom:1px solid var(--border-light);transition:background .1s;
+    }
+    .suggest-item:last-child{border-bottom:none;}
+    .suggest-item:hover{background:var(--ivory);}
+    .suggest-thumb{
+      width:30px;height:44px;object-fit:cover;border-radius:2px;
+      flex-shrink:0;border:1px solid var(--border);
+    }
+    .suggest-thumb-ph{
+      width:30px;height:44px;border-radius:2px;flex-shrink:0;
+      background:var(--ivory-mid);border:1px solid var(--border);
+      display:flex;align-items:center;justify-content:center;font-size:.8rem;
+    }
+    .suggest-info{flex:1;min-width:0;}
+    .suggest-title{
+      font-family:var(--serif);font-size:.92rem;font-weight:600;color:var(--ink);
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .suggest-meta{
+      font-family:var(--sans);font-size:.68rem;color:var(--ink-lo);margin-top:2px;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== [SECTION: nav-header] ===== -->
+  <header id="nav-header">
+    <div class="container">
+      <div class="nav-top">
+        <a class="nav-logo" onclick="showPage('home')">Book<em>Talk</em></a>
+        <p class="nav-tagline">독서 서평 커뮤니티</p>
+        <div id="nav-auth-area"><a onclick="openAuthModal('login')">로그인</a></div>
+      </div>
+    </div>
+    <hr class="nav-rule"/>
+    <div class="nav-links-row">
+      <a onclick="showPage('search')">책 검색</a>
+      <span class="nav-sep">·</span>
+      <a onclick="showPage('recommend')">AI 추천</a>
+      <span class="nav-sep">·</span>
+      <a onclick="showPage('also-read')">이런 책도</a>
+      <span class="nav-sep">·</span>
+      <a onclick="goToProfile()">프로필</a>
+      <span class="nav-sep">·</span>
+      <button class="nav-btn-write" onclick="openWriteModal(null)">서평 쓰기</button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ===== [SECTION: page-home] ===== -->
+    <div id="page-home" class="page active">
+      <div class="container">
+
+        <!-- [SECTION: home-hero] -->
+        <section class="home-hero">
+          <div class="hero-kicker">독자들을 위한 공간</div>
+          <h1>당신의 독서 이야기를<br><em>마음껏</em> 써보세요</h1>
+          <p class="hero-sub">책을 읽고, 깊은 서평을 쓰고, 독자들과 토론하세요</p>
+          <div class="hero-search-wrap">
+            <input id="home-search-input" type="text" placeholder="책 제목 또는 저자를 검색하세요…" onkeydown="if(event.key==='Enter')doSearch(this.value)"/>
+            <button onclick="doSearch(document.getElementById('home-search-input').value)">검색</button>
+          </div>
+          <button class="hero-write-btn" onclick="openWriteModal(null)">✏ 서평 쓰기</button>
+        </section>
+
+        <!-- [SECTION: home-ai-banner] -->
+        <div class="home-ai-banner">
+          <div>
+            <div class="ai-banner-eyebrow">✦ AI 맞춤 추천</div>
+            <div class="ai-banner-copy">읽은 책을 알려주시면, 취향에 꼭 맞는 다음 책을 찾아드려요</div>
+          </div>
+          <button class="ai-banner-btn" onclick="showPage('recommend')">추천 받기 →</button>
+        </div>
+
+        <!-- [SECTION: home-latest-reviews] -->
+        <div class="section-head">
+          <h2>최근 인기 서평</h2>
+        </div>
+        <div id="home-feed-grid" class="review-feed-grid"></div>
+
+      </div>
+    </div>
+
+    <!-- ===== [SECTION: page-search] ===== -->
+    <div id="page-search" class="page">
+      <div class="container">
+        <div class="search-page-header">
+          <h1>책 검색</h1>
+          <div class="hero-search-wrap" style="max-width:520px;margin:0 auto;">
+            <input id="search-input" type="text" placeholder="책 제목 또는 저자를 입력하세요…" onkeydown="if(event.key==='Enter')doSearch(this.value)"/>
+            <button onclick="doSearch(document.getElementById('search-input').value)">검색</button>
+          </div>
+        </div>
+        <div class="section-head" id="search-result-head" style="display:none">
+          <h2>검색 결과 <span id="search-result-count" style="font-weight:400;letter-spacing:0;text-transform:none;font-family:var(--serif);font-style:italic;"></span></h2>
+        </div>
+        <div id="search-results-grid" class="search-results-grid">
+          <div style="grid-column:1/-1;text-align:center;padding:64px 0;font-family:var(--serif);font-style:italic;color:var(--ink-lo);">위 검색창에서 책 제목이나 저자를 입력해 검색해 보세요.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== [SECTION: page-book-detail] ===== -->
+    <div id="page-book-detail" class="page">
+      <div class="container">
+        <div class="book-hero">
+          <div class="book-cover-lg">
+            <div class="cover-img" id="book-cover-img">📚</div>
+          </div>
+          <div class="book-desc">
+            <div class="book-genre-tags" id="book-genre-tags"></div>
+            <h1 id="book-detail-title"></h1>
+            <div class="book-byline" id="book-detail-byline"></div>
+            <div class="book-synopsis" id="book-detail-synopsis"></div>
+            <div class="book-actions">
+              <button class="btn-write" onclick="openWriteModal(appState.currentBook)">✏ 서평 쓰기</button>
+              <button class="btn-secondary">＋ 읽고 싶어요</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- [SECTION: book-reviews-list] -->
+        <span id="book-reviews-count" style="display:none"></span>
+        <div id="book-reviews-grid" class="review-feed-grid"></div>
+      </div>
+    </div>
+
+    <!-- ===== [SECTION: page-review-detail] ===== -->
+    <div id="page-review-detail" class="page">
+      <div class="container-narrow">
+        <a class="back-link" onclick="showPage('book-detail')">← 책으로 돌아가기</a>
+        <div id="review-detail-book-chip" class="review-book-chip"></div>
+        <h1 id="review-detail-title" class="review-full-title"></h1>
+        <hr class="review-rule"/>
+        <div class="review-meta-row">
+          <div id="review-detail-stars" class="star-row"></div>
+          <div class="author-chip-md">
+            <div id="review-detail-avatar" class="avatar-sm"></div>
+            <span id="review-detail-nickname"></span>
+          </div>
+          <span id="review-detail-date"></span>
+        </div>
+
+        <!-- [SECTION: review-full-body] -->
+        <div id="review-detail-body" class="review-full-body"></div>
+
+        <!-- [SECTION: like-action-row] -->
+        <div class="like-row">
+          <button id="review-detail-like-btn" class="btn-like" onclick="toggleLike()">❤ 공감 <span id="review-detail-like-count">0</span></button>
+          <span style="font-family:var(--serif);font-style:italic;font-size:0.88rem;color:var(--ink-lo);">이 서평이 도움이 됐나요?</span>
+        </div>
+        <hr class="section-divider"/>
+
+        <!-- [SECTION: section-comments] -->
+        <div id="section-comments">
+          <div class="comments-header">댓글 <span id="comments-count" class="comment-count">0</span></div>
+          <div class="comment-form">
+            <input id="comment-content-input" type="text" placeholder="댓글을 입력하세요…"
+              onkeydown="if(event.key==='Enter')submitComment()"/>
+            <button onclick="submitComment()">등록</button>
+          </div>
+          <div id="comments-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== [SECTION: page-ai-recommend] ===== -->
+    <div id="page-ai-recommend" class="page">
+      <div class="container">
+        <div class="ai-hero">
+          <div class="ai-kicker">✦ AI 책 추천</div>
+          <h1>내 취향에 맞는<br><em>다음 책</em>은?</h1>
+          <p>최근 재미있게 읽은 책을 알려주시면 AI가 분석해서 딱 맞는 책을 찾아드려요</p>
+        </div>
+        <div class="ai-form-card">
+          <div class="form-head">읽은 책 입력 <span style="font-weight:400;text-transform:none;letter-spacing:0;font-family:var(--serif);font-style:italic;color:var(--ink-lo);">— 최대 3권</span></div>
+          <div id="ai-input-slots">
+            <div class="book-input-slot"><div class="slot-number">1</div><input class="ai-book-input" type="text" placeholder="책 제목 또는 저자…"/></div>
+            <div class="book-input-slot"><div class="slot-number">2</div><input class="ai-book-input" type="text" placeholder="책 제목 또는 저자…"/></div>
+          </div>
+          <button id="btn-add-slot" class="btn-add-slot" onclick="addAiSlot()">+ 책 추가</button>
+          <button class="btn-ai-go" onclick="doAiRecommend()">✦ 추천 받기</button>
+        </div>
+        <div id="ai-results-area" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- ===== [SECTION: page-also-read] ===== -->
+    <div id="page-also-read" class="page">
+      <div class="container">
+        <div class="ar-hero">
+          <div class="ai-kicker">✦ 이런 책도</div>
+          <h1>나와 취향이 맞는<br><em>독자들의 책장</em></h1>
+          <p>같은 책을 좋아한 독자들이 또 어떤 책을 읽었는지 보여드려요</p>
+        </div>
+        <div id="ar-content"></div>
+      </div>
+    </div>
+
+    <!-- ===== [SECTION: page-profile] ===== -->
+    <div id="page-profile" class="page">
+      <div class="container">
+        <div class="profile-hero">
+          <div class="profile-avatar">🙂</div>
+          <div class="profile-info">
+            <h2 id="profile-nickname">나의 서재</h2>
+            <div id="profile-join-date" class="join-date">내가 쓴 서평을 모아볼 수 있어요</div>
+            <div class="profile-stats">
+              <div class="stat-item"><span id="stat-review-count" class="stat-val">0</span><span class="stat-lbl">서평</span></div>
+              <div class="stat-item"><span id="stat-book-count" class="stat-val">0</span><span class="stat-lbl">읽은 책</span></div>
+              <div class="stat-item"><span id="stat-likes-count" class="stat-val">0</span><span class="stat-lbl">받은 공감</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="profile-tabs">
+          <button class="active">내 서평</button>
+          <button>읽은 책</button>
+        </div>
+        <div id="profile-tab-reviews">
+          <div id="profile-reviews-grid" class="review-feed-grid"></div>
+        </div>
+        <div id="profile-tab-books" style="display:none;">
+          <div id="profile-books-grid" class="search-results-grid"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== [SECTION: auth-modal] ===== -->
+  <div id="auth-modal" style="display:none">
+    <div class="auth-overlay" onclick="closeAuthModal()"></div>
+    <div class="auth-card">
+      <button class="auth-close" onclick="closeAuthModal()">✕</button>
+      <div class="auth-tabs">
+        <button id="auth-tab-login" class="active" onclick="switchAuthTab('login')">로그인</button>
+        <button id="auth-tab-signup" onclick="switchAuthTab('signup')">회원가입</button>
+      </div>
+
+      <div id="auth-login-form">
+        <div class="form-field">
+          <label>닉네임</label>
+          <input id="login-nickname" type="text" placeholder="닉네임 입력" onkeydown="if(event.key==='Enter')doLogin()"/>
+        </div>
+        <div class="form-field">
+          <label>비밀번호</label>
+          <input id="login-password" type="password" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter')doLogin()"/>
+        </div>
+        <div id="login-error" class="auth-error"></div>
+        <button class="btn-submit" style="width:100%" onclick="doLogin()">로그인</button>
+      </div>
+
+      <div id="auth-signup-form" style="display:none">
+        <div class="form-field">
+          <label>닉네임</label>
+          <input id="signup-nickname" type="text" placeholder="닉네임 (2자 이상)" onkeydown="if(event.key==='Enter')doSignup()"/>
+        </div>
+        <div class="form-field">
+          <label>비밀번호</label>
+          <input id="signup-password" type="password" placeholder="비밀번호 (4자 이상)" onkeydown="if(event.key==='Enter')doSignup()"/>
+        </div>
+        <div id="signup-error" class="auth-error"></div>
+        <button class="btn-submit" style="width:100%" onclick="doSignup()">회원가입</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- ===== [SECTION: modal-write-review] ===== -->
+  <div id="modal-write-review" style="display:none">
+    <div class="write-overlay" onclick="closeWriteModal()"></div>
+    <div class="write-card">
+      <div class="write-card-header">
+        <span class="write-card-title">✦ 서평 작성</span>
+        <button class="auth-close" onclick="closeWriteModal()">✕</button>
+      </div>
+
+      <!-- 책 선택 -->
+      <div class="form-field">
+        <label>책 선택 <span style="color:var(--rust)">*</span></label>
+        <div id="wm-book-chip" class="review-book-chip-wrap" style="display:none">
+          <img id="wm-book-chip-img" class="review-book-chip-thumb" src="" alt="" style="display:none"/>
+          <div class="review-book-chip-info">
+            <div id="wm-book-chip-title" class="review-book-chip-title"></div>
+            <div id="wm-book-chip-author" class="review-book-chip-author"></div>
+          </div>
+          <button type="button" class="review-book-chip-change" onclick="wmClearBook()">변경</button>
+        </div>
+        <div id="wm-search-row" class="review-book-search-row">
+          <input id="wm-book-input" type="text" placeholder="책 제목 또는 저자로 검색…" autocomplete="off"/>
+        </div>
+      </div>
+
+      <!-- 서평 폼 (책 선택 후 표시) -->
+      <div id="wm-review-form" style="display:none">
+        <div class="form-field">
+          <label>별점</label>
+          <div id="wm-star-row" class="star-input-row" style="cursor:pointer">
+            <span style="font-size:1.6rem">★</span>
+            <span style="font-size:1.6rem">★</span>
+            <span style="font-size:1.6rem">★</span>
+            <span style="font-size:1.6rem">★</span>
+            <span style="font-size:1.6rem">★</span>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>서평 제목</label>
+          <input id="wm-title-input" type="text" placeholder="서평의 제목을 입력하세요"/>
+        </div>
+        <div class="form-field">
+          <label>본문</label>
+          <textarea id="wm-content-input" placeholder="이 책에 대한 생각을 자유롭게 써주세요…"></textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn-cancel" onclick="closeWriteModal()">취소</button>
+          <button class="btn-submit" onclick="submitWriteModal()">서평 등록</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== [SECTION: footer-bottom] ===== -->
+  <footer id="footer-bottom">
+    <div class="container footer-inner">
+      <div class="footer-logo">Book<em>Talk</em></div>
+      <div class="footer-copy">© 2026 BookTalk · 독서 서평 커뮤니티 · 김재희</div>
+    </div>
+  </footer>
+
+  <!-- ===== [SECTION: router-script] ===== -->
+  <script>
+    const pageMap={home:'page-home',search:'page-search','book-detail':'page-book-detail','review-detail':'page-review-detail',recommend:'page-ai-recommend',profile:'page-profile','also-read':'page-also-read'};
+    function showPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const el=document.getElementById(pageMap[n]);if(el){el.classList.add('active');window.scrollTo(0,0);}if(n==='home')renderHomeFeed();if(n==='profile')renderProfile();if(n==='also-read')renderAlsoRead();}
+    function goToProfile(){if(typeof getCurrentUser==='function'&&getCurrentUser()){showPage('profile');}else{if(typeof openAuthModal==='function')openAuthModal('login');}}
+    document.querySelectorAll('.profile-tabs button').forEach((b,i)=>{b.addEventListener('click',()=>{document.querySelectorAll('.profile-tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('profile-tab-reviews').style.display=i===0?'block':'none';document.getElementById('profile-tab-books').style.display=i===1?'block':'none';});});
+    document.querySelectorAll('.sort-btns button').forEach(b=>{b.addEventListener('click',()=>{b.closest('.sort-btns').querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');});});
+  </script>
+
+  <!-- ===== [SECTION: kakao-book-api] ===== -->
+  <script>
+    // ----------------------------------------------------------------
+    // 카카오 REST API 키를 여기에 입력하세요.
+    // 발급 방법: https://developers.kakao.com → 내 애플리케이션 → 앱 키 → REST API 키
+    // ----------------------------------------------------------------
+    const KAKAO_API_KEY = '__KAKAO_API_KEY__';
+
+    // 현재 검색 결과를 저장해두는 간단한 상태 객체
+    const appState = { books: [], currentBook: null };
+
+    // XSS 방지용 HTML 이스케이프
+    function esc(str) {
+      return String(str ?? '')
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // 카카오 CDN 썸네일 URL의 해상도 파라미터를 교체해 고화질 이미지를 얻는다.
+    // 원본 URL 예시: https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=...
+    function hiRes(url, w, h) {
+      if (!url) return null;
+      return url.replace(/\/thumb\/[^/]+\//, '/thumb/R' + w + 'x' + h + '.q95/');
+    }
+
+    // ── 카카오 책 검색 API 호출 ──────────────────────────────────────
+    async function searchKakaoBooks(query, size = 12) {
+      const url = 'https://dapi.kakao.com/v3/search/book?query='
+        + encodeURIComponent(query) + '&size=' + size;
+      const res = await fetch(url, {
+        headers: { Authorization: 'KakaoAK ' + KAKAO_API_KEY }
+      });
+      if (!res.ok) throw new Error('API 오류 (' + res.status + ')');
+      return res.json();
+    }
+
+    // ── 검색 실행 (홈/검색 페이지 공통) ─────────────────────────────
+    async function doSearch(query) {
+      query = (query || '').trim();
+      if (!query) return;
+
+      showPage('search');
+
+      // 검색 페이지 입력창에도 쿼리 반영
+      const input = document.getElementById('search-input');
+      if (input) input.value = query;
+
+      // 결과 헤더 숨기고, 로딩 표시
+      const grid = document.getElementById('search-results-grid');
+      const head = document.getElementById('search-result-head');
+      head.style.display = 'none';
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:64px 0;'
+        + 'font-family:var(--sans);color:var(--ink-lo);">검색 중…</div>';
+
+      try {
+        const data = await searchKakaoBooks(query);
+        appState.books = data.documents || [];
+        renderSearchResults(appState.books, data.meta?.total_count ?? 0);
+      } catch (e) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:64px 0;'
+          + 'font-family:var(--sans);color:var(--rust);">'
+          + '검색 오류: ' + esc(e.message)
+          + '<br><small style="color:var(--ink-lo);margin-top:8px;display:block">'
+          + 'API 키가 입력됐는지, 카카오 개발자 콘솔에서 도메인이 등록됐는지 확인해 주세요.</small></div>';
+      }
+    }
+
+    // ── 검색 결과 렌더링 ─────────────────────────────────────────────
+    function renderSearchResults(books, total) {
+      const grid = document.getElementById('search-results-grid');
+      const head = document.getElementById('search-result-head');
+      const countEl = document.getElementById('search-result-count');
+
+      head.style.display = '';
+      countEl.textContent = '— 총 ' + total.toLocaleString() + '권';
+
+      if (!books.length) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:64px 0;'
+          + 'font-family:var(--serif);font-style:italic;color:var(--ink-lo);">검색 결과가 없습니다.</div>';
+        return;
+      }
+
+      grid.innerHTML = books.map((book, i) => {
+        const cover = book.thumbnail
+          ? '<img src="' + esc(hiRes(book.thumbnail, 300, 435)) + '"'
+            + ' data-fallback="' + esc(book.thumbnail) + '"'
+            + ' onerror="this.onerror=null;this.src=this.dataset.fallback"'
+            + ' alt="' + esc(book.title) + '"/>'
+          : '<span style="font-size:2.5rem">📚</span>';
+        const author = esc((book.authors || []).join(', '));
+        const year = book.datetime ? book.datetime.slice(0,4) : '';
+        return '<div class="card-book" onclick="openBook(' + i + ')">'
+          + '<div class="book-cover-wrap">' + cover + '</div>'
+          + '<div class="book-title">' + esc(book.title) + '</div>'
+          + '<div class="book-author">' + author + '</div>'
+          + '<div class="book-publisher">' + esc(book.publisher) + (year ? ' · ' + year : '') + '</div>'
+          + '</div>';
+      }).join('');
+    }
+
+    // ── 책 상세 페이지로 이동 ────────────────────────────────────────
+    function openBook(index) {
+      const book = appState.books[index];
+      if (!book) return;
+      appState.currentBook = book;
+      renderBookDetail(book);
+      showPage('book-detail');
+      loadBookReviews();
+      initStarInput();
+    }
+
+    // ── 책 상세 정보 렌더링 ──────────────────────────────────────────
+    function renderBookDetail(book) {
+      // 표지
+      const coverEl = document.getElementById('book-cover-img');
+      if (coverEl) {
+        coverEl.innerHTML = book.thumbnail
+          ? '<img src="' + esc(hiRes(book.thumbnail, 500, 726)) + '"'
+            + ' data-fallback="' + esc(book.thumbnail) + '"'
+            + ' onerror="this.onerror=null;this.src=this.dataset.fallback"'
+            + ' alt="' + esc(book.title) + '"'
+            + ' style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius)"/>'
+          : '📚';
+      }
+
+      // 제목 / byline / 시놉시스
+      const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+      set('book-detail-title', book.title || '');
+      const authors = (book.authors || []).join(', ');
+      const year = book.datetime ? book.datetime.slice(0,4) : '';
+      set('book-detail-byline', authors + ' 지음 · ' + book.publisher + (year ? ' · ' + year : ''));
+      set('book-detail-synopsis', book.contents || '책 소개 정보가 없습니다.');
+
+      // 카테고리 태그
+      const tagsEl = document.getElementById('book-genre-tags');
+      if (tagsEl) {
+        if (book.category_name) {
+          tagsEl.innerHTML = book.category_name.split('>')
+            .map(t => '<span class="genre-tag">' + esc(t.trim()) + '</span>')
+            .join('');
+        } else {
+          tagsEl.innerHTML = '';
+        }
+      }
+    }
+  </script>
+
+  <!-- ===== [SECTION: review-system] ===== -->
+  <script>
+    const LS_KEY = 'booktalk_reviews';
+    let currentReviewRating = 3;
+    let currentSortOrder = 'latest';
+    let currentReviewList = [];
+    let currentReviewId = null;
+
+    // ── localStorage 헬퍼 ────────────────────────────────────────────
+    function getAllReviews() {
+      try { return JSON.parse(localStorage.getItem(LS_KEY) || '[]'); } catch { return []; }
+    }
+    function saveAllReviews(arr) { localStorage.setItem(LS_KEY, JSON.stringify(arr)); }
+
+    function bookKeyOf(book) {
+      const isbn = (book.isbn || '').split(' ')[0];
+      return isbn || book.title;
+    }
+
+    // ── 별점 입력 초기화 ─────────────────────────────────────────────
+    function initStarInput() {
+      const row = document.getElementById('review-star-row');
+      if (!row) return;
+      currentReviewRating = 3;
+      refreshStars(row, currentReviewRating);
+      row.querySelectorAll('span').forEach((star, i) => {
+        star.onclick = () => { currentReviewRating = i + 1; refreshStars(row, currentReviewRating); };
+        star.onmouseenter = () => refreshStars(row, i + 1);
+      });
+      row.onmouseleave = () => refreshStars(row, currentReviewRating);
+    }
+    function refreshStars(row, n) {
+      row.querySelectorAll('span').forEach((s, i) => s.classList.toggle('active', i < n));
+    }
+
+    // ── 서평 등록 ────────────────────────────────────────────────────
+    function submitReview() {
+      const book = appState.currentBook;
+      if (!book) return;
+      const title   = document.getElementById('review-title-input').value.trim();
+      const content = document.getElementById('review-content-input').value.trim();
+      const nickname = getCurrentUser()?.nickname || document.getElementById('review-nickname-input').value.trim() || '익명';
+      if (!title)   { alert('서평 제목을 입력해 주세요.'); return; }
+      if (!content) { alert('본문을 입력해 주세요.'); return; }
+
+      const review = {
+        id: Date.now().toString(),
+        userId: getCurrentUser()?.id || null,
+        bookKey: bookKeyOf(book),
+        bookTitle: book.title,
+        bookThumbnail: book.thumbnail || '',
+        bookAuthor: (book.authors || []).join(', '),
+        nickname,
+        title,
+        content,
+        rating: currentReviewRating,
+        likes: 0,
+        createdAt: new Date().toISOString()
+      };
+
+      const all = getAllReviews();
+      all.unshift(review);
+      saveAllReviews(all);
+
+      // 폼 초기화
+      document.getElementById('review-title-input').value = '';
+      document.getElementById('review-content-input').value = '';
+      document.getElementById('review-nickname-input').value = '';
+      initStarInput();
+
+      loadBookReviews();
+      document.getElementById('book-reviews-grid').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelReview() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── 책 서평 목록 로드 & 렌더 ────────────────────────────────────
+    function loadBookReviews() {
+      const book = appState.currentBook;
+      if (!book) return;
+      const key = bookKeyOf(book);
+      const reviews = getAllReviews().filter(r => r.bookKey === key);
+      currentReviewList = applySortOrder(reviews, currentSortOrder);
+      renderBookReviews(currentReviewList);
+    }
+
+    function applySortOrder(list, order) {
+      const copy = [...list];
+      return order === 'likes'
+        ? copy.sort((a, b) => b.likes - a.likes)
+        : copy.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    }
+
+    function sortReviews(order) {
+      currentSortOrder = order;
+      currentReviewList = applySortOrder(currentReviewList, order);
+      renderBookReviews(currentReviewList);
+    }
+
+    function renderBookReviews(reviews) {
+      const grid = document.getElementById('book-reviews-grid');
+      const countEl = document.getElementById('book-reviews-count');
+      if (countEl) countEl.textContent = reviews.length + '편';
+
+      if (!reviews.length) {
+        grid.innerHTML = '<div style="grid-column:1/-1;padding:40px 0;font-family:var(--serif);'
+          + 'font-style:italic;color:var(--ink-lo);text-align:center;">'
+          + '아직 서평이 없어요. 첫 번째 서평을 써보세요!</div>';
+        return;
+      }
+
+      grid.innerHTML = reviews.map(r => {
+        const stars = Array.from({length:5}, (_,i) =>
+          '<span class="star' + (i >= r.rating ? ' empty' : '') + '">★</span>').join('');
+        const preview = r.content.length > 100 ? r.content.slice(0, 100) + '…' : r.content;
+        const cover = r.bookThumbnail
+          ? '<img src="' + esc(r.bookThumbnail) + '" class="book-thumb-sm" alt=""/>'
+          : '<div class="book-thumb-placeholder">📚</div>';
+        const date = new Date(r.createdAt).toLocaleDateString('ko-KR', {month:'long', day:'numeric'});
+        return '<div class="card-review" onclick="openReview(\'' + r.id + '\')">'
+          + '<div class="card-review-book">' + cover
+          + '<div><div class="book-title-sm">' + esc(r.bookTitle) + '</div>'
+          + '<div class="book-author-sm">' + esc(r.bookAuthor) + '</div></div></div>'
+          + '<div class="review-title">' + esc(r.title) + '</div>'
+          + '<div class="star-row">' + stars + '</div>'
+          + '<div class="review-preview">' + esc(preview) + '</div>'
+          + '<div class="card-review-footer">'
+          + '<div class="author-chip"><div class="avatar-xs">' + esc(r.nickname.charAt(0)) + '</div>'
+          + '<span>' + esc(r.nickname) + '</span></div>'
+          + '<span>❤️ ' + r.likes + '</span><span>' + date + '</span>'
+          + '</div></div>';
+      }).join('');
+    }
+
+    // ── 서평 상세 페이지 ─────────────────────────────────────────────
+    function openReview(id) {
+      const review = getAllReviews().find(r => r.id === id);
+      if (!review) return;
+      currentReviewId = id;
+      // 뒤로가기 시 book-detail이 해당 책을 보여줄 수 있도록 currentBook 설정
+      if (!appState.currentBook || appState.currentBook.title !== review.bookTitle) {
+        appState.currentBook = {
+          title: review.bookTitle,
+          authors: review.bookAuthor ? [review.bookAuthor] : [],
+          publisher: '',
+          thumbnail: review.bookThumbnail || '',
+          isbn: review.bookKey,
+          contents: '',
+          category_name: ''
+        };
+        renderBookDetail(appState.currentBook);
+        loadBookReviews();
+      }
+      renderReviewDetail(review);
+      showPage('review-detail');
+      loadComments(id);
+    }
+
+    function renderReviewDetail(r) {
+      const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+      const setHtml = (id, val) => { const el=document.getElementById(id); if(el) el.innerHTML=val; };
+
+      const thumb = r.bookThumbnail
+        ? '<img src="' + esc(r.bookThumbnail) + '" style="width:100%;height:100%;object-fit:cover;border-radius:2px"/>'
+        : '📚';
+      setHtml('review-detail-book-chip',
+        '<div class="book-chip-thumb">' + thumb + '</div>'
+        + '<span>' + esc(r.bookTitle) + ' · ' + esc(r.bookAuthor) + '</span>');
+
+      set('review-detail-title', r.title);
+      setHtml('review-detail-stars', Array.from({length:5}, (_,i) =>
+        '<span class="star' + (i >= r.rating ? ' empty' : '') + '">★</span>').join(''));
+      set('review-detail-avatar', r.nickname.charAt(0));
+      set('review-detail-nickname', r.nickname);
+      set('review-detail-date', new Date(r.createdAt)
+        .toLocaleDateString('ko-KR', {year:'numeric', month:'long', day:'numeric'}));
+
+      setHtml('review-detail-body', r.content.split('\n')
+        .filter(p => p.trim())
+        .map(p => '<p>' + esc(p) + '</p>').join(''));
+
+      set('review-detail-like-count', r.likes);
+      const btn = document.getElementById('review-detail-like-btn');
+      if (btn) {
+        const user = getCurrentUser();
+        const hasLiked = user && (r.likedBy || []).includes(user.id);
+        btn.classList.toggle('liked', !!hasLiked);
+      }
+    }
+
+    // ── 좋아요 토글 ──────────────────────────────────────────────────
+    function toggleLike() {
+      if (!currentReviewId) return;
+      const user = getCurrentUser();
+      if (!user) { openAuthModal('login'); return; }
+
+      const all = getAllReviews();
+      const idx = all.findIndex(r => r.id === currentReviewId);
+      if (idx === -1) return;
+
+      const likedBy = all[idx].likedBy || [];
+      const alreadyLiked = likedBy.includes(user.id);
+
+      if (alreadyLiked) {
+        all[idx].likedBy = likedBy.filter(id => id !== user.id);
+        all[idx].likes = Math.max(0, (all[idx].likes || 0) - 1);
+        document.getElementById('review-detail-like-btn').classList.remove('liked');
+      } else {
+        all[idx].likedBy = [...likedBy, user.id];
+        all[idx].likes = (all[idx].likes || 0) + 1;
+        document.getElementById('review-detail-like-btn').classList.add('liked');
+      }
+
+      saveAllReviews(all);
+      document.getElementById('review-detail-like-count').textContent = all[idx].likes;
+    }
+  </script>
+  <!-- ===== [SECTION: home-profile-render] ===== -->
+  <script>
+    // 서평 카드 HTML 한 장 생성 (홈/프로필 공용)
+    function makeReviewCard(r) {
+      const stars = Array.from({length:5}, (_,i) =>
+        '<span class="star' + (i >= r.rating ? ' empty' : '') + '">★</span>').join('');
+      const preview = r.content.length > 120 ? r.content.slice(0, 120) + '…' : r.content;
+      const cover = r.bookThumbnail
+        ? '<img src="' + esc(r.bookThumbnail) + '" class="book-thumb-sm" alt=""/>'
+        : '<div class="book-thumb-placeholder">📚</div>';
+      const date = new Date(r.createdAt).toLocaleDateString('ko-KR', {month:'long', day:'numeric'});
+      return '<div class="card-review" onclick="openReview(\'' + r.id + '\')">'
+        + '<div class="card-review-book">' + cover
+        + '<div><div class="book-title-sm">' + esc(r.bookTitle) + '</div>'
+        + '<div class="book-author-sm">' + esc(r.bookAuthor) + '</div></div></div>'
+        + '<div class="review-title">' + esc(r.title) + '</div>'
+        + '<div class="star-row">' + stars + '</div>'
+        + '<div class="review-preview">' + esc(preview) + '</div>'
+        + '<div class="card-review-footer">'
+        + '<div class="author-chip"><div class="avatar-xs">' + esc(r.nickname.charAt(0)) + '</div>'
+        + '<span>' + esc(r.nickname) + '</span></div>'
+        + '<span>❤️ ' + r.likes + '</span><span>' + date + '</span>'
+        + '</div></div>';
+    }
+
+    // ── 홈 피드 ──────────────────────────────────────────────────────
+    function renderHomeFeed() {
+      const grid = document.getElementById('home-feed-grid');
+      if (!grid) return;
+      const all = getAllReviews();
+      // 공감 1개 이상인 서평 중 공감 상위 6개
+      const reviews = [...all].filter(r => (r.likes || 0) > 0)
+                               .sort((a, b) => b.likes - a.likes).slice(0, 6);
+      if (!reviews.length) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:48px 0;'
+          + 'font-family:var(--serif);font-style:italic;color:var(--ink-lo);">'
+          + '아직 서평이 없어요. 책을 검색하고 첫 서평을 작성해 보세요!</div>';
+        return;
+      }
+      grid.innerHTML = reviews.map(makeReviewCard).join('');
+    }
+
+    // ── 프로필 ────────────────────────────────────────────────────────
+    function renderProfile() {
+      const user = getCurrentUser();
+      const reviews = getAllReviews().filter(r => user && r.userId === user.id);
+      const totalLikes = reviews.reduce((sum, r) => sum + (r.likes || 0), 0);
+      const uniqueBooks = [...new Map(reviews.map(r => [r.bookKey, r])).values()];
+
+      const setVal = (id, v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+      setVal('profile-nickname', user ? user.nickname + '의 서재' : '나의 서재');
+      if (user?.createdAt) {
+        const joined = new Date(user.createdAt).toLocaleDateString('ko-KR', {year:'numeric', month:'long', day:'numeric'});
+        setVal('profile-join-date', joined + ' 가입');
+      }
+      setVal('stat-review-count', reviews.length);
+      setVal('stat-book-count', uniqueBooks.length);
+      setVal('stat-likes-count', totalLikes);
+
+      // 내 서평 탭
+      const revGrid = document.getElementById('profile-reviews-grid');
+      if (revGrid) {
+        revGrid.innerHTML = reviews.length
+          ? reviews.map(makeReviewCard).join('')
+          : '<div style="grid-column:1/-1;padding:40px 0;font-family:var(--serif);font-style:italic;'
+            + 'color:var(--ink-lo);text-align:center;">아직 작성한 서평이 없어요.</div>';
+      }
+
+      // 읽은 책 탭 (서평 쓴 책들)
+      const bookGrid = document.getElementById('profile-books-grid');
+      if (bookGrid) {
+        bookGrid.innerHTML = uniqueBooks.length
+          ? uniqueBooks.map(r => {
+              const cover = r.bookThumbnail
+                ? '<img src="' + esc(r.bookThumbnail) + '" alt=""/>'
+                : '<span style="font-size:2.5rem">📚</span>';
+              return '<div class="card-book" onclick="openBookFromProfile(\'' + esc(r.bookKey) + '\')">'
+                + '<div class="book-cover-wrap">' + cover + '</div>'
+                + '<div class="book-title">' + esc(r.bookTitle) + '</div>'
+                + '<div class="book-author">' + esc(r.bookAuthor) + '</div>'
+                + '</div>';
+            }).join('')
+          : '<div style="grid-column:1/-1;padding:40px 0;font-family:var(--serif);font-style:italic;'
+            + 'color:var(--ink-lo);text-align:center;">서평을 쓴 책이 여기에 표시돼요.</div>';
+      }
+    }
+
+    // 프로필 '읽은 책' 탭에서 책 클릭 → 해당 책 서평 목록 열기
+    function openBookFromProfile(bookKey) {
+      const review = getAllReviews().find(r => r.bookKey === bookKey);
+      if (!review) return;
+      // 검색 없이 책 상세 진입: 가상 book 객체 복원
+      appState.currentBook = {
+        title: review.bookTitle,
+        authors: [review.bookAuthor],
+        publisher: '',
+        thumbnail: review.bookThumbnail,
+        isbn: bookKey,
+        contents: '',
+        category_name: ''
+      };
+      renderBookDetail(appState.currentBook);
+      showPage('book-detail');
+      loadBookReviews();
+      initStarInput();
+    }
+
+    // 썸네일 없는 시드 데이터를 카카오 API로 자동 보강
+    async function enrichSeedThumbnails() {
+      const needs = getAllReviews().filter(r => r.id.startsWith('seed_') && !r.bookThumbnail);
+      if (!needs.length) return;
+      let changed = false;
+      for (const r of needs) {
+        try {
+          const data = await searchKakaoBooks(r.bookTitle + ' ' + r.bookAuthor, 1);
+          const found = data.documents?.[0];
+          if (found?.thumbnail) { r.bookThumbnail = found.thumbnail; changed = true; }
+        } catch { /* API 키 미설정 시 무시 */ }
+      }
+      if (!changed) return;
+      const all = getAllReviews().map(r => needs.find(n => n.id === r.id) || r);
+      saveAllReviews(all);
+      renderHomeFeed();
+    }
+
+    // 페이지 최초 로드 시 홈 피드 초기화
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHomeFeed();
+      enrichSeedThumbnails();
+    });
+
+    // ===== [SECTION: also-read] =====
+    // 가상 독자 프로파일 (협업 필터링용 — 제목 기반 키 사용)
+    const VIRTUAL_READERS = [
+      { id:'vr_1', books:['채식주의자','소년이 온다','82년생 김지영'] },
+      { id:'vr_2', books:['아몬드','죽고 싶지만 떡볶이는 먹고 싶어','언어의 온도','불편한 편의점'] },
+      { id:'vr_3', books:['달러구트 꿈 백화점','우리가 빛의 속도로 갈 수 없다면','아몬드'] },
+      { id:'vr_4', books:['82년생 김지영','채식주의자','아몬드','언어의 온도'] },
+      { id:'vr_5', books:['불편한 편의점','달러구트 꿈 백화점','죽고 싶지만 떡볶이는 먹고 싶어'] },
+      { id:'vr_6', books:['소년이 온다','82년생 김지영','채식주의자','우리가 빛의 속도로 갈 수 없다면'] },
+      { id:'vr_7', books:['달러구트 꿈 백화점','언어의 온도','죽고 싶지만 떡볶이는 먹고 싶어','아몬드'] },
+      // 스릴러/범죄 취향 독자 추가
+      { id:'vr_8', books:['차일드 호더','눈알이 제일 맛있단다','유성의 인연1','유성의 인연2','내 심장을 쏴라'] },
+      { id:'vr_9', books:['차일드 호더','눈알이 제일 맛있단다','포스 윙','내게 남은 사랑을 드릴게요','검은 방'] },
+    ];
+
+    // 공백·특수문자 제거 정규화 (ISBN ↔ 제목 매칭용)
+    function normBook(s) { return String(s).replace(/[\s\-·・]/g,'').toLowerCase(); }
+
+    // 두 책 식별자가 같은 책을 가리키는지 판단 (정규화 후 완전일치 또는 부분포함)
+    function bookMatch(a, b) {
+      const na = normBook(a), nb = normBook(b);
+      if (!na || !nb) return false;
+      if (na === nb) return true;
+      // 한쪽이 다른 쪽을 포함하면 같은 책으로 간주 (예: 시리즈 권수 차이 등)
+      const minLen = Math.min(na.length, nb.length);
+      return minLen >= 4 && (na.includes(nb) || nb.includes(na));
+    }
+
+    async function renderAlsoRead() {
+      const wrap = document.getElementById('ar-content');
+      if (!wrap) return;
+      const user = getCurrentUser();
+
+      if (!user) {
+        wrap.innerHTML = '<div class="ar-empty"><strong>로그인이 필요해요</strong>'
+          + '로그인 후 서평을 작성하면 취향에 맞는 책을 추천해드려요.</div>';
+        return;
+      }
+
+      // 현재 유저의 별 4개 이상 서평
+      const myReviews = getAllReviews().filter(r => r.userId === user.id && r.rating >= 4);
+      if (!myReviews.length) {
+        wrap.innerHTML = '<div class="ar-empty"><strong>아직 서평이 없어요</strong>'
+          + '별 4개 이상의 서평을 작성하면 취향이 맞는 독자들의 책을 보여드려요.</div>';
+        return;
+      }
+
+      // 내가 읽은 책 유일 목록 (칩 렌더용)
+      const myBooks = [...new Set(myReviews.map(r => r.bookKey))];
+
+      // ISBN·제목 어느 쪽으로 저장됐든 내 책인지 판단
+      const isMine = b => myReviews.some(r =>
+        bookMatch(r.bookKey, b) || bookMatch(r.bookTitle || '', b)
+      );
+
+      // 실제 유저 데이터 + 가상 독자 합치기
+      const realMap = {};
+      getAllReviews()
+        .filter(r => r.userId && r.userId !== user.id && r.rating >= 4)
+        .forEach(r => (realMap[r.userId] = realMap[r.userId] || new Set()).add(r.bookKey));
+      const allReaders = [
+        ...VIRTUAL_READERS.map(vr => ({ id: vr.id, books: vr.books })),
+        ...Object.entries(realMap).map(([id, s]) => ({ id, books: [...s] }))
+      ];
+
+      // 겹치는 독자의 "내가 안 읽은" 책에 점수 부여
+      const score = {};
+      allReaders.forEach(reader => {
+        const shared = reader.books.filter(b => isMine(b)).length;
+        if (!shared) return;
+        reader.books.filter(b => !isMine(b))
+          .forEach(b => { score[b] = (score[b] || 0) + shared; });
+      });
+
+      const ranked = Object.entries(score)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 6)
+        .map(([bookKey]) => bookKey);
+
+      if (!ranked.length) {
+        wrap.innerHTML = '<div class="ar-empty"><strong>아직 겹치는 독자가 없어요</strong>'
+          + '서평을 더 작성할수록 정확해져요.</div>';
+        return;
+      }
+
+      // 내 좋아한 책 칩 렌더
+      const myBooksHtml = myBooks.map(k => {
+        const r = myReviews.find(rv => rv.bookKey === k);
+        return '<span class="ar-book-chip">★' + (r?.rating||'') + ' ' + esc(r?.bookTitle || k) + '</span>';
+      }).join('');
+
+      // 추천 책 카드 데이터 수집 (기존 리뷰에서 먼저, 없으면 카카오 API)
+      const allReviews = getAllReviews();
+      const cards = await Promise.all(ranked.map(async bookKey => {
+        const ref = allReviews.find(r => r.bookKey === bookKey);
+        if (ref && ref.bookTitle) {
+          return { bookKey, title: ref.bookTitle, author: ref.bookAuthor, thumbnail: ref.bookThumbnail || '' };
+        }
+        try {
+          const data = await searchKakaoBooks(bookKey, 1);
+          const doc  = data.documents?.[0];
+          if (doc) return { bookKey: doc.isbn || bookKey, title: doc.title, author: (doc.authors||[]).join(', '), thumbnail: doc.thumbnail||'' };
+        } catch {}
+        return { bookKey, title: bookKey, author: '', thumbnail: '' };
+      }));
+
+      const cardsHtml = cards.map(c => {
+        const cover = c.thumbnail
+          ? '<img src="' + esc(c.thumbnail) + '" alt=""/>'
+          : '<span style="font-size:2.5rem">📚</span>';
+        return '<div class="card-book" onclick="openBookFromAlsoRead(\'' + esc(c.bookKey) + '\')">'
+          + '<div class="book-cover-wrap">' + cover + '</div>'
+          + '<div class="book-title">' + esc(c.title) + '</div>'
+          + '<div class="book-author">' + esc(c.author) + '</div>'
+          + '</div>';
+      }).join('');
+
+      wrap.innerHTML =
+        '<div class="ar-my-books"><div class="ar-my-books-label">내가 좋아한 책 (별 4개 이상)</div>'
+        + '<div class="ar-my-books-list">' + myBooksHtml + '</div></div>'
+        + '<div class="ar-section-head">비슷한 취향의 독자들이 읽은 책</div>'
+        + '<div class="search-results-grid">' + cardsHtml + '</div>';
+    }
+
+    function openBookFromAlsoRead(bookKey) {
+      const review = getAllReviews().find(r => r.bookKey === bookKey);
+      if (review) {
+        appState.currentBook = {
+          title: review.bookTitle, authors: [review.bookAuthor],
+          publisher: '', thumbnail: review.bookThumbnail || '',
+          isbn: bookKey, contents: '', category_name: ''
+        };
+        renderBookDetail(appState.currentBook);
+        showPage('book-detail');
+        loadBookReviews();
+      } else {
+        // 카카오 검색 후 이동
+        searchKakaoBooks(bookKey, 1).then(data => {
+          const doc = data.documents?.[0];
+          if (doc) { appState.currentBook = doc; renderBookDetail(doc); loadBookReviews(); showPage('book-detail'); }
+        }).catch(() => {});
+      }
+    }
+  </script>
+
+  <!-- ===== [SECTION: search-autocomplete] ===== -->
+  <script>
+    const acBooks = {};
+
+    function setupAutocomplete(inputId) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      const wrap = input.closest('.hero-search-wrap');
+      if (!wrap) return;
+
+      // hero-search-wrap 자리에 래퍼 삽입 (overflow:hidden 우회)
+      const outer = document.createElement('div');
+      outer.className = 'autocomplete-wrap';
+      wrap.parentNode.insertBefore(outer, wrap);
+      outer.appendChild(wrap);
+
+      // 드롭다운 컨테이너
+      const dropId = inputId + '-drop';
+      const drop = document.createElement('div');
+      drop.id = dropId;
+      drop.className = 'search-dropdown';
+      outer.appendChild(drop);
+
+      let timer = null;
+
+      input.addEventListener('input', () => {
+        clearTimeout(timer);
+        const q = input.value.trim();
+        if (!q.length) { drop.style.display = 'none'; return; }
+        timer = setTimeout(async () => {
+          try {
+            const data = await searchKakaoBooks(q, 7);
+            showDrop(dropId, data.documents || []);
+          } catch { drop.style.display = 'none'; }
+        }, 300);
+      });
+
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Escape') drop.style.display = 'none';
+        if (e.key === 'Enter')  drop.style.display = 'none';
+      });
+
+      // 외부 클릭 시 닫기
+      document.addEventListener('click', e => {
+        if (!outer.contains(e.target)) drop.style.display = 'none';
+      });
+    }
+
+    function showDrop(dropId, books) {
+      const drop = document.getElementById(dropId);
+      if (!drop) return;
+      if (!books.length) { drop.style.display = 'none'; return; }
+
+      acBooks[dropId] = books;
+      drop.innerHTML = books.map((b, i) => {
+        const thumb = b.thumbnail
+          ? '<img src="' + esc(b.thumbnail) + '" class="suggest-thumb"/>'
+          : '<div class="suggest-thumb-ph">📚</div>';
+        const author = (b.authors || []).join(', ');
+        return '<div class="suggest-item" onclick="pickSuggestion(\'' + dropId + '\',' + i + ')">'
+          + thumb
+          + '<div class="suggest-info">'
+          + '<div class="suggest-title">' + esc(b.title) + '</div>'
+          + '<div class="suggest-meta">' + esc(author) + (b.publisher ? ' · ' + esc(b.publisher) : '') + '</div>'
+          + '</div></div>';
+      }).join('');
+      drop.style.display = 'block';
+    }
+
+    function pickSuggestion(dropId, index) {
+      const book = acBooks[dropId]?.[index];
+      if (!book) return;
+
+      // 책 상세 페이지로 바로 이동
+      appState.currentBook = book;
+      renderBookDetail(book);
+      showPage('book-detail');
+      loadBookReviews();
+      initStarInput();
+
+      document.getElementById(dropId).style.display = 'none';
+    }
+
+    // ── 서평 폼 인라인 책 검색 ───────────────────────────────────────
+    function setupReviewBookAutocomplete() {
+      const input = document.getElementById('review-book-input');
+      if (!input || input._rbSetup) return;
+      input._rbSetup = true;
+      const row = document.getElementById('review-book-search-row');
+      const drop = document.createElement('div');
+      drop.id = 'review-book-drop';
+      drop.className = 'search-dropdown';
+      row.appendChild(drop);
+      let timer = null;
+      input.addEventListener('input', () => {
+        clearTimeout(timer);
+        const q = input.value.trim();
+        if (!q.length) { drop.style.display = 'none'; return; }
+        timer = setTimeout(async () => {
+          try {
+            const data = await searchKakaoBooks(q, 7);
+            const books = data.documents || [];
+            if (!books.length) { drop.style.display = 'none'; return; }
+            acBooks['review-book-drop'] = books;
+            drop.innerHTML = books.map((b, i) => {
+              const thumb = b.thumbnail
+                ? '<img src="' + esc(b.thumbnail) + '" class="suggest-thumb"/>'
+                : '<div class="suggest-thumb-ph">📚</div>';
+              const author = (b.authors || []).join(', ');
+              return '<div class="suggest-item" onclick="pickReviewBook(' + i + ')">'
+                + thumb + '<div class="suggest-info">'
+                + '<div class="suggest-title">' + esc(b.title) + '</div>'
+                + '<div class="suggest-meta">' + esc(author) + (b.publisher ? ' · ' + esc(b.publisher) : '') + '</div>'
+                + '</div></div>';
+            }).join('');
+            drop.style.display = 'block';
+          } catch { drop.style.display = 'none'; }
+        }, 300);
+      });
+      input.addEventListener('keydown', e => { if (e.key === 'Escape') drop.style.display = 'none'; });
+      document.addEventListener('click', e => { if (!row.contains(e.target)) drop.style.display = 'none'; });
+    }
+
+    function pickReviewBook(index) {
+      const book = acBooks['review-book-drop']?.[index];
+      if (!book) return;
+      appState.currentBook = book;
+      renderBookDetail(book);
+      loadBookReviews();
+      updateReviewBookChip(book);
+      initStarInput();
+      const drop = document.getElementById('review-book-drop');
+      if (drop) drop.style.display = 'none';
+      document.getElementById('review-book-input').value = '';
+    }
+
+    function updateReviewBookChip(book) {
+      const chip = document.getElementById('review-book-chip');
+      const searchRow = document.getElementById('review-book-search-row');
+      if (!chip || !searchRow) return;
+      if (book) {
+        const img = document.getElementById('review-book-chip-img');
+        const titleEl = document.getElementById('review-book-chip-title');
+        const authorEl = document.getElementById('review-book-chip-author');
+        if (img) { img.src = book.thumbnail || ''; img.style.display = book.thumbnail ? '' : 'none'; }
+        if (titleEl) titleEl.textContent = book.title || '';
+        if (authorEl) authorEl.textContent = (book.authors || []).join(', ');
+        chip.style.display = 'flex';
+        searchRow.style.display = 'none';
+      } else {
+        chip.style.display = 'none';
+        searchRow.style.display = '';
+      }
+    }
+
+    function clearReviewBook() {
+      appState.currentBook = null;
+      updateReviewBookChip(null);
+      // 책 정보 UI 초기화
+      ['book-detail-cover','book-detail-title','book-detail-byline','book-detail-synopsis'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '';
+      });
+      document.getElementById('book-reviews-grid').innerHTML = '';
+      document.getElementById('book-reviews-count').textContent = '';
+      const input = document.getElementById('review-book-input');
+      if (input) { input.value = ''; input.focus(); }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setupAutocomplete('home-search-input');
+      setupAutocomplete('search-input');
+    });
+
+    // ===== 서평 작성 모달 =====
+    let wmCurrentBook = null;
+    let wmCurrentRating = 3;
+
+    function openWriteModal(book) {
+      if (!getCurrentUser()) { openAuthModal('login'); return; }
+      wmCurrentBook = book || null;
+      document.getElementById('modal-write-review').style.display = '';
+      document.body.style.overflow = 'hidden';
+      if (book) {
+        _wmShowChip(book);
+        _wmShowForm();
+      } else {
+        document.getElementById('wm-book-chip').style.display = 'none';
+        document.getElementById('wm-search-row').style.display = '';
+        document.getElementById('wm-review-form').style.display = 'none';
+      }
+      _wmInitStars();
+      _wmSetupSearch();
+      // 폼 필드 초기화
+      const t = document.getElementById('wm-title-input');
+      const c = document.getElementById('wm-content-input');
+      if (t) t.value = '';
+      if (c) c.value = '';
+      // 책 없으면 검색창 포커스
+      if (!book) setTimeout(() => document.getElementById('wm-book-input')?.focus(), 50);
+    }
+
+    function closeWriteModal() {
+      document.getElementById('modal-write-review').style.display = 'none';
+      document.body.style.overflow = '';
+      // 드롭다운이 열려 있을 경우 닫기
+      const drop = document.getElementById('wm-book-drop');
+      if (drop) drop.style.display = 'none';
+    }
+
+    let _toastTimer = null;
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      if (!t) return;
+      t.textContent = msg;
+      t.classList.add('show');
+      clearTimeout(_toastTimer);
+      _toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    function _wmShowChip(book) {
+      const img = document.getElementById('wm-book-chip-img');
+      document.getElementById('wm-book-chip-title').textContent = book.title || '';
+      document.getElementById('wm-book-chip-author').textContent = (book.authors || []).join(', ');
+      if (img) { img.src = book.thumbnail || ''; img.style.display = book.thumbnail ? '' : 'none'; }
+      document.getElementById('wm-book-chip').style.display = 'flex';
+      document.getElementById('wm-search-row').style.display = 'none';
+    }
+
+    function _wmShowForm() {
+      document.getElementById('wm-review-form').style.display = '';
+      _wmInitStars();
+    }
+
+    function wmClearBook() {
+      wmCurrentBook = null;
+      document.getElementById('wm-book-chip').style.display = 'none';
+      document.getElementById('wm-search-row').style.display = '';
+      document.getElementById('wm-review-form').style.display = 'none';
+      const input = document.getElementById('wm-book-input');
+      if (input) { input.value = ''; input.focus(); }
+    }
+
+    function _wmInitStars() {
+      wmCurrentRating = 3;
+      const row = document.getElementById('wm-star-row');
+      if (!row) return;
+      const spans = row.querySelectorAll('span');
+      function paint(n) {
+        spans.forEach((s, i) => {
+          s.style.color = i < n ? 'var(--gold)' : 'var(--border)';
+          s.style.transform = i < n ? 'scale(1.15)' : 'scale(1)';
+          s.style.display = 'inline-block';
+          s.style.transition = 'color .1s, transform .1s';
+        });
+      }
+      paint(wmCurrentRating);
+      spans.forEach((star, i) => {
+        star.onclick = () => { wmCurrentRating = i + 1; paint(wmCurrentRating); };
+        star.onmouseenter = () => paint(i + 1);
+      });
+      row.onmouseleave = () => paint(wmCurrentRating);
+    }
+
+    function _wmSetupSearch() {
+      const input = document.getElementById('wm-book-input');
+      if (!input || input._wmSetup) return;
+      input._wmSetup = true;
+
+      // overflow:auto 컨테이너에 잘리지 않도록 body에 직접 붙이고 fixed 좌표 사용
+      const drop = document.createElement('div');
+      drop.id = 'wm-book-drop';
+      drop.className = 'search-dropdown';
+      drop.style.position = 'fixed';
+      drop.style.zIndex = '400';
+      document.body.appendChild(drop);
+
+      function positionDrop() {
+        const r = input.getBoundingClientRect();
+        drop.style.top  = (r.bottom + 4) + 'px';
+        drop.style.left = r.left + 'px';
+        drop.style.width = r.width + 'px';
+      }
+
+      let timer = null;
+      input.addEventListener('input', () => {
+        clearTimeout(timer);
+        const q = input.value.trim();
+        if (!q) { drop.style.display = 'none'; return; }
+        timer = setTimeout(async () => {
+          try {
+            const data = await searchKakaoBooks(q, 7);
+            const books = data.documents || [];
+            if (!books.length) { drop.style.display = 'none'; return; }
+            acBooks['wm-book-drop'] = books;
+            drop.innerHTML = books.map((b, i) => {
+              const thumb = b.thumbnail
+                ? '<img src="' + esc(b.thumbnail) + '" class="suggest-thumb"/>'
+                : '<div class="suggest-thumb-ph">📚</div>';
+              const author = (b.authors || []).join(', ');
+              return '<div class="suggest-item" onclick="wmPickBook(' + i + ')">'
+                + thumb + '<div class="suggest-info">'
+                + '<div class="suggest-title">' + esc(b.title) + '</div>'
+                + '<div class="suggest-meta">' + esc(author) + (b.publisher ? ' · ' + esc(b.publisher) : '') + '</div>'
+                + '</div></div>';
+            }).join('');
+            positionDrop();
+            drop.style.display = 'block';
+          } catch { drop.style.display = 'none'; }
+        }, 300);
+      });
+      input.addEventListener('keydown', e => { if (e.key === 'Escape') drop.style.display = 'none'; });
+      // 모달 스크롤 시 드롭다운 위치 재계산
+      document.getElementById('modal-write-review')?.addEventListener('scroll', () => {
+        if (drop.style.display !== 'none') positionDrop();
+      }, true);
+      document.addEventListener('click', e => {
+        if (e.target !== input && !drop.contains(e.target)) drop.style.display = 'none';
+      });
+    }
+
+    function wmPickBook(index) {
+      const book = acBooks['wm-book-drop']?.[index];
+      if (!book) return;
+      wmCurrentBook = book;
+      _wmShowChip(book);
+      _wmShowForm();
+      const drop = document.getElementById('wm-book-drop');
+      if (drop) drop.style.display = 'none';
+      document.getElementById('wm-book-input').value = '';
+    }
+
+    function submitWriteModal() {
+      const book = wmCurrentBook;
+      if (!book) { alert('책을 선택해 주세요.'); return; }
+      const title = document.getElementById('wm-title-input').value.trim();
+      const content = document.getElementById('wm-content-input').value.trim();
+      const nickname = getCurrentUser()?.nickname || '익명';
+      if (!title) { alert('서평 제목을 입력해 주세요.'); return; }
+      if (!content) { alert('본문을 입력해 주세요.'); return; }
+
+      const review = {
+        id: Date.now().toString(),
+        userId: getCurrentUser()?.id || null,
+        bookKey: bookKeyOf(book),
+        bookTitle: book.title,
+        bookThumbnail: book.thumbnail || '',
+        bookAuthor: (book.authors || []).join(', '),
+        nickname,
+        title,
+        content,
+        rating: wmCurrentRating,
+        likes: 0,
+        likedBy: [],
+        createdAt: new Date().toISOString()
+      };
+
+      const all = getAllReviews();
+      all.unshift(review);
+      saveAllReviews(all);
+      closeWriteModal();
+      showToast('서평이 등록됐어요! ✓');
+
+      // 현재 book-detail 페이지가 같은 책이면 서평 목록 새로고침
+      if (appState.currentBook && bookKeyOf(appState.currentBook) === review.bookKey) {
+        loadBookReviews();
+      }
+      // 홈 피드 새로고침
+      if (document.getElementById('page-home')?.classList.contains('active')) {
+        renderHomeFeed();
+      }
+    }
+  </script>
+
+  <!-- ===== [SECTION: ai-recommend] ===== -->
+  <script>
+    // ----------------------------------------------------------------
+    // Groq API 키를 여기에 입력하세요.
+    // 발급: https://console.groq.com → 왼쪽 메뉴 "API Keys" → "Create API Key" → 복사
+    // ----------------------------------------------------------------
+    const GROQ_API_KEY = '__GROQ_API_KEY__';
+
+    // ── 슬롯 추가 ────────────────────────────────────────────────────
+    // 선택된 책 객체 저장 (슬롯 인덱스 → 카카오 book 객체)
+    const selectedAiBooks = {};
+
+    function addAiSlot() {
+      const container = document.getElementById('ai-input-slots');
+      const count = container.querySelectorAll('.book-input-slot').length + 1;
+      if (count > 3) return;
+      const slot = document.createElement('div');
+      slot.className = 'book-input-slot';
+      slot.innerHTML = '<div class="slot-number">' + count + '</div>'
+        + '<input class="ai-book-input" type="text" placeholder="책 제목 또는 저자…"/>';
+      container.appendChild(slot);
+      setupAiAutocomplete(slot.querySelector('.ai-book-input'), count - 1);
+      if (count >= 3) document.getElementById('btn-add-slot').style.display = 'none';
+    }
+
+    // ── AI 입력 슬롯 자동완성 ─────────────────────────────────────────
+    function setupAiAutocomplete(input, slotIdx) {
+      const slot = input.closest('.book-input-slot');
+      if (!slot) return;
+      slot.style.position = 'relative';
+
+      const dropId = 'ai-drop-' + slotIdx;
+      const drop = document.createElement('div');
+      drop.id = dropId;
+      drop.className = 'search-dropdown';
+      // 슬롯 번호만큼 왼쪽 여백 (slot-number width 24px + gap 10px)
+      drop.style.left = '34px';
+      slot.appendChild(drop);
+
+      let timer = null;
+      input.addEventListener('input', () => {
+        delete selectedAiBooks[slotIdx]; // 직접 타이핑 시 선택 초기화
+        clearTimeout(timer);
+        const q = input.value.trim();
+        if (!q.length) { drop.style.display = 'none'; return; }
+        timer = setTimeout(async () => {
+          try {
+            const data = await searchKakaoBooks(q, 6);
+            showAiDrop(dropId, data.documents || [], slotIdx);
+          } catch { drop.style.display = 'none'; }
+        }, 300);
+      });
+
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Escape' || e.key === 'Enter') drop.style.display = 'none';
+      });
+      document.addEventListener('click', e => {
+        if (!slot.contains(e.target)) drop.style.display = 'none';
+      });
+    }
+
+    function showAiDrop(dropId, books, slotIdx) {
+      const drop = document.getElementById(dropId);
+      if (!drop) return;
+      if (!books.length) { drop.style.display = 'none'; return; }
+      acBooks[dropId] = books;
+      drop.innerHTML = books.map((b, i) => {
+        const thumb = b.thumbnail
+          ? '<img src="' + esc(b.thumbnail) + '" class="suggest-thumb"/>'
+          : '<div class="suggest-thumb-ph">📚</div>';
+        const author = (b.authors || []).join(', ');
+        return '<div class="suggest-item" onclick="pickAiBook(\'' + dropId + '\',' + i + ',' + slotIdx + ')">'
+          + thumb
+          + '<div class="suggest-info">'
+          + '<div class="suggest-title">' + esc(b.title) + '</div>'
+          + '<div class="suggest-meta">' + esc(author) + (b.publisher ? ' · ' + esc(b.publisher) : '') + '</div>'
+          + '</div></div>';
+      }).join('');
+      drop.style.display = 'block';
+    }
+
+    function pickAiBook(dropId, bookIdx, slotIdx) {
+      const book = acBooks[dropId]?.[bookIdx];
+      if (!book) return;
+      selectedAiBooks[slotIdx] = book;
+      // 입력창에 선택된 책 제목 표시
+      const inputs = document.querySelectorAll('.ai-book-input');
+      if (inputs[slotIdx]) inputs[slotIdx].value = book.title;
+      document.getElementById(dropId).style.display = 'none';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.ai-book-input').forEach((input, i) => {
+        setupAiAutocomplete(input, i);
+      });
+    });
+
+    // ── 추천 실행 ────────────────────────────────────────────────────
+    async function doAiRecommend() {
+      const books = [...document.querySelectorAll('.ai-book-input')]
+        .map((el, i) => {
+          const sel = selectedAiBooks[i];
+          if (sel) {
+            const author = (sel.authors || []).join(', ');
+            return sel.title + (author ? ' (저자: ' + author + ')' : '');
+          }
+          return el.value.trim();
+        }).filter(Boolean);
+      if (!books.length) { alert('책을 1권 이상 입력해주세요.'); return; }
+
+      const area = document.getElementById('ai-results-area');
+      area.style.display = '';
+      area.innerHTML = '<div style="text-align:center;padding:56px 0;font-family:var(--sans);'
+        + 'font-size:0.85rem;color:var(--ink-lo);">✦ AI가 취향을 분석하는 중이에요…</div>';
+      area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      try {
+        const recs = await callGroq(books);
+        await renderAiResults(recs);
+      } catch (e) {
+        area.innerHTML = '<div style="text-align:center;padding:56px 0;font-family:var(--sans);'
+          + 'color:var(--rust);">오류: ' + esc(e.message)
+          + '<br><small style="color:var(--ink-lo);display:block;margin-top:8px">'
+          + 'Groq API 키를 확인해주세요. console.groq.com에서 발급받을 수 있어요.</small></div>';
+      }
+    }
+
+    // ── Groq API 호출 ────────────────────────────────────────────────
+    async function callGroq(books) {
+      if (!GROQ_API_KEY || GROQ_API_KEY === 'YOUR_GROQ_API_KEY') {
+        throw new Error('Groq API 키가 입력되지 않았어요. 코드의 GROQ_API_KEY를 수정해주세요.');
+      }
+
+      const list = books.map((b, i) => (i + 1) + '. ' + b).join('\n');
+      const prompt = '다음 책들을 재미있게 읽은 독자에게 비슷한 분위기·주제의 한국 출판 도서 6권을 추천해주세요.\n'
+        + '반드시 실제로 한국에서 출판되어 서점에서 구매 가능한 책만 추천하세요. 존재하지 않는 책은 절대 포함하지 마세요.\n\n'
+        + list + '\n\n'
+        + '반드시 아래 JSON 배열 형식으로만 응답하세요. 다른 텍스트 없이 JSON만 출력하세요:\n'
+        + '[{"title":"책제목","author":"저자명","reason":"추천 이유 한 문장"}]';
+
+      const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + GROQ_API_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.7
+        })
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        const msg = errData.error?.message || res.status;
+        throw new Error('Groq API 오류: ' + msg);
+      }
+
+      const data = await res.json();
+      const raw = data.choices?.[0]?.message?.content || '';
+      return parseAiJSON(raw);
+    }
+
+    // ── LLM JSON 파싱 (불완전한 형식 자동 복구) ──────────────────────
+    function parseAiJSON(raw) {
+      // 1. 마크다운 코드블록 제거
+      let text = raw.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+
+      // 2. 응답 안에서 JSON 배열 부분만 추출
+      const arrMatch = text.match(/\[[\s\S]*\]/);
+      if (!arrMatch) throw new Error('AI 응답에서 JSON을 찾을 수 없어요. 다시 시도해주세요.');
+      let json = arrMatch[0];
+
+      // 3. 후행 쉼표 제거 (, 뒤에 ] 또는 } 가 오는 경우)
+      json = json.replace(/,(\s*[}\]])/g, '$1');
+
+      // 4. 먼저 그대로 파싱 시도
+      try { return JSON.parse(json); } catch (_) {}
+
+      // 5. 홑따옴표 → 쌍따옴표 변환 후 재시도
+      const fixed = json
+        .replace(/:\s*'([^']*)'/g, ': "$1"')           // 값의 홑따옴표
+        .replace(/([{,]\s*)'(\w[^']*)'(\s*:)/g, '$1"$2"$3'); // 키의 홑따옴표
+      try { return JSON.parse(fixed); } catch (_) {}
+
+      throw new Error('AI 응답 형식을 파싱할 수 없어요. 다시 시도해주세요.');
+    }
+
+    // ── 제목 유사도 체크 ─────────────────────────────────────────────
+    function titleMatches(groqTitle, kakaoTitle) {
+      const normalize = s => s.replace(/\s+/g, '').toLowerCase();
+      const a = normalize(groqTitle);
+      const b = normalize(kakaoTitle);
+      // 완전 포함 또는 앞 4글자 이상 일치
+      if (b.includes(a) || a.includes(b)) return true;
+      const minLen = Math.min(a.length, b.length, 4);
+      return minLen >= 2 && a.slice(0, minLen) === b.slice(0, minLen);
+    }
+
+    // ── 결과 렌더링 (카카오 API로 환각 검증 후 실존 책만 표시) ──────────
+    async function renderAiResults(recs) {
+      const area = document.getElementById('ai-results-area');
+      area.innerHTML = '<div style="text-align:center;padding:24px 0;font-family:var(--sans);'
+        + 'font-size:0.82rem;color:var(--ink-lo);">✦ 카카오 도서 데이터베이스로 실존 여부 확인 중…</div>';
+
+      // 카카오 API로 상위 3개 검색 후 제목 유사도로 매칭
+      const checked = await Promise.all(recs.map(async r => {
+        try {
+          const data = await searchKakaoBooks(r.title + ' ' + r.author, 3);
+          const match = (data.documents || []).find(d => titleMatches(r.title, d.title));
+          return { ...r, kakao: match || null };
+        } catch {
+          return { ...r, kakao: null };
+        }
+      }));
+
+      // 검증된 것만 필터링, 최대 3권
+      const confirmed = checked.filter(r => r.kakao !== null).slice(0, 3);
+      const skipped   = checked.length - checked.filter(r => r.kakao !== null).length;
+
+      if (!confirmed.length) {
+        area.innerHTML = '<div style="text-align:center;padding:56px 0;font-family:var(--serif);'
+          + 'font-style:italic;color:var(--ink-lo);">'
+          + 'AI가 추천한 책들을 도서 데이터베이스에서 찾을 수 없었어요.<br>'
+          + '<span style="font-size:0.85rem;">다른 책으로 다시 시도해 보세요.</span></div>';
+        return;
+      }
+
+      const note = skipped > 0
+        ? '<p style="font-family:var(--serif);font-style:italic;font-size:0.82rem;color:var(--ink-lo);margin-top:6px;">'
+          + '실제 존재하는 책 ' + confirmed.length + '권만 표시해요 (미확인 ' + skipped + '권 제외)</p>'
+        : '<p style="font-family:var(--serif);font-style:italic;font-size:0.9rem;color:var(--ink-lo);">'
+          + '입력하신 책을 분석해서 골라드린 ' + confirmed.length + '권이에요</p>';
+
+      area.innerHTML = '<div class="results-section-head" style="text-align:center;margin-bottom:32px;">'
+        + '<h2 style="font-family:var(--serif);font-size:1.5rem;font-weight:900;margin-bottom:4px;">추천 결과</h2>'
+        + note + '</div>'
+        + '<div class="ai-result-grid">' + confirmed.map(makeAiCard).join('') + '</div>';
+    }
+
+    function makeAiCard(r) {
+      // 카카오 데이터를 정보 출처로 사용 (환각 방지)
+      const title  = r.kakao.title;
+      const author = (r.kakao.authors || []).join(', ');
+      const cover  = r.kakao.thumbnail
+        ? '<img src="' + esc(r.kakao.thumbnail) + '" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius)"/>'
+        : '📚';
+
+      return '<div class="card-ai-result">'
+        + '<div class="ai-book-cover">' + cover + '</div>'
+        + '<div class="ai-book-title">' + esc(title) + '</div>'
+        + '<div class="ai-book-author">' + esc(author) + '</div>'
+        + '<div class="ai-reason">' + esc(r.reason) + '</div>'
+        + '</div>';
+    }
+  </script>
+
+  <!-- ===== [SECTION: auth-system] ===== -->
+  <script>
+    const LS_USERS   = 'booktalk_users';
+    const LS_SESSION = 'booktalk_session';
+
+    function getUsers() {
+      try { return JSON.parse(localStorage.getItem(LS_USERS) || '[]'); } catch { return []; }
+    }
+    function saveUsers(arr) { localStorage.setItem(LS_USERS, JSON.stringify(arr)); }
+    function getCurrentUser() {
+      try { return JSON.parse(localStorage.getItem(LS_SESSION) || 'null'); } catch { return null; }
+    }
+    function setCurrentUser(u) { localStorage.setItem(LS_SESSION, JSON.stringify(u)); }
+    function clearCurrentUser() { localStorage.removeItem(LS_SESSION); }
+
+    // ── 모달 제어 ──────────────────────────────────────────────────
+    function openAuthModal(tab) {
+      document.getElementById('auth-modal').style.display = '';
+      switchAuthTab(tab || 'login');
+      document.getElementById('login-error').textContent = '';
+      document.getElementById('signup-error').textContent = '';
+    }
+    function closeAuthModal() {
+      document.getElementById('auth-modal').style.display = 'none';
+    }
+    function switchAuthTab(tab) {
+      document.getElementById('auth-login-form').style.display  = tab === 'login'  ? '' : 'none';
+      document.getElementById('auth-signup-form').style.display = tab === 'signup' ? '' : 'none';
+      document.getElementById('auth-tab-login').classList.toggle('active',  tab === 'login');
+      document.getElementById('auth-tab-signup').classList.toggle('active', tab === 'signup');
+    }
+
+    // ── 회원가입 ────────────────────────────────────────────────────
+    function doSignup() {
+      const nickname = document.getElementById('signup-nickname').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const errEl    = document.getElementById('signup-error');
+      if (nickname.length < 2) { errEl.textContent = '닉네임은 2자 이상이어야 해요.'; return; }
+      if (password.length < 4) { errEl.textContent = '비밀번호는 4자 이상이어야 해요.'; return; }
+      const users = getUsers();
+      if (users.find(u => u.nickname === nickname)) { errEl.textContent = '이미 사용 중인 닉네임이에요.'; return; }
+      const user = { id: Date.now().toString(), nickname, password, createdAt: new Date().toISOString() };
+      users.push(user);
+      saveUsers(users);
+      setCurrentUser({ id: user.id, nickname: user.nickname, createdAt: user.createdAt });
+      applyLoginState();
+      closeAuthModal();
+    }
+
+    // ── 로그인 ──────────────────────────────────────────────────────
+    function doLogin() {
+      const nickname = document.getElementById('login-nickname').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errEl    = document.getElementById('login-error');
+      const user = getUsers().find(u => u.nickname === nickname && u.password === password);
+      if (!user) { errEl.textContent = '닉네임 또는 비밀번호가 틀렸어요.'; return; }
+      setCurrentUser({ id: user.id, nickname: user.nickname, createdAt: user.createdAt });
+      applyLoginState();
+      closeAuthModal();
+    }
+
+    // ── 로그아웃 ────────────────────────────────────────────────────
+    function logout() {
+      clearCurrentUser();
+      applyLoginState();
+    }
+
+    // ── 로그인 상태 전체 반영 ────────────────────────────────────────
+    function applyLoginState() {
+      const user = getCurrentUser();
+      updateNavAuth(user);
+      updateNicknameFields(user);
+    }
+
+    function updateNavAuth(user) {
+      const area = document.getElementById('nav-auth-area');
+      if (!area) return;
+      if (user) {
+        area.innerHTML =
+          '<span style="font-size:0.75rem;font-weight:700;letter-spacing:.06em;color:var(--rust);padding:6px 14px;">'
+          + esc(user.nickname) + '</span>'
+          + '<span class="nav-sep">·</span>'
+          + '<a onclick="logout()" style="font-size:0.75rem;font-weight:700;letter-spacing:.08em;'
+          + 'text-transform:uppercase;color:var(--ink-lo);padding:6px 14px;">로그아웃</a>';
+      } else {
+        area.innerHTML =
+          '<a onclick="openAuthModal(\'login\')" style="font-size:0.75rem;font-weight:700;'
+          + 'letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mid);padding:6px 14px;">로그인</a>';
+      }
+    }
+
+    function updateNicknameFields(user) {
+      // 서평 폼 닉네임 필드
+      const rnInput = document.getElementById('review-nickname-input');
+      if (rnInput) {
+        const rnField = rnInput.closest('.form-field');
+        if (user) {
+          rnInput.value = user.nickname;
+          if (rnField) rnField.style.display = 'none';
+        } else {
+          rnInput.value = '';
+          if (rnField) rnField.style.display = '';
+        }
+      }
+      // 댓글 폼 닉네임 필드
+      const cnInput = document.getElementById('comment-nickname-input');
+      if (cnInput) {
+        if (user) { cnInput.value = user.nickname; cnInput.parentElement.style.display = 'none'; }
+        else { cnInput.value = ''; cnInput.parentElement.style.display = ''; }
+      }
+    }
+
+    // 페이지 로드 시 세션 복원
+    document.addEventListener('DOMContentLoaded', applyLoginState);
+  </script>
+
+  <!-- ===== [SECTION: seed-data] ===== -->
+  <script>
+    (function seedIfNeeded() {
+      const _existing = getAllReviews();
+      const _seeds = [
+        {
+          id: 'seed_1',
+          bookKey: '채식주의자',
+          bookTitle: '채식주의자',
+          bookThumbnail: '',
+          bookAuthor: '한강',
+          nickname: '준혁_reads',
+          title: '침묵은 언어다 — 영혜의 몸이 던지는 질문',
+          content: `이 소설을 처음 집어든 건 한강이 노벨 문학상을 받은 직후였다. 솔직히 말하면, 수상 소식이 없었다면 이 책을 이렇게 빨리 읽지는 않았을 것이다. 그러나 읽고 나서 후회했다 — 왜 이렇게 늦게 읽었냐고.
+
+영혜는 말하지 않는다. 그녀가 왜 채식을 선언했는지, 왜 점점 먹기를 거부하는지, 왜 스스로를 식물이라고 믿는지 — 아무것도 설명하지 않는다. 그 침묵이 이 소설 전체를 지배한다. 처음에는 그 침묵이 답답했다. 하지만 읽을수록 깨달았다. 영혜의 침묵은 무능이 아니라 저항이다. 언어로 이 세계를 바꿀 수 없다고 느낀 사람이 몸으로 말하기를 선택한 것이다.
+
+세 편의 연작 중 두 번째 이야기인 '몽고반점'이 가장 강렬했다. 형부는 영혜의 몸에 예술을 투영하고, 그 과정에서 자신의 욕망을 '창작'이라는 이름으로 포장한다. 그 섬뜩함은 명백한 폭력보다 더 불편하다. 폭력이 예술의 언어로 포장될 때, 우리는 그것을 얼마나 쉽게 용납하는가.
+
+한강의 문장은 놀라울 정도로 건조하다. 감정을 직접 서술하지 않는다. 그럼에도 불구하고, 아니 그렇기 때문에, 읽는 내내 무언가가 천천히 조여든다. 책을 덮고 난 뒤에도 영혜의 눈빛이 계속 떠올랐다. 이 소설은 단순한 문학적 사건이 아니라, 우리가 일상에서 얼마나 많은 폭력을 '당연한 것'으로 받아들이고 있는지를 묻는 질문지다.`,
+          rating: 4,
+          likes: 31,
+          createdAt: '2026-05-27T09:14:00.000Z'
+        },
+        {
+          id: 'seed_2',
+          bookKey: '아몬드',
+          bookTitle: '아몬드',
+          bookThumbnail: '',
+          bookAuthor: '손원평',
+          nickname: '소연_서재',
+          title: '느끼지 못해도 움직인다는 것',
+          content: `처음엔 감정을 느끼지 못하는 소년의 이야기가 차갑게 느껴질 것이라고 생각했다. 그러나 읽다 보면 오히려 반대다. 감정 없이 묘사되는 세계가 감정 있는 우리를 더 선명하게 비춘다.
+
+윤재는 편도체가 작아 공포도, 슬픔도, 기쁨도 제대로 느끼지 못한다. 그런 그가 곤이를 만나고, 도라를 만난다. 윤재가 감정을 '배우는' 과정이 소설의 핵심인데, 역설적으로 그가 감정 없이 하는 행동들이 가장 감동적이다. 느끼지 못해도 움직이는 것, 이해하지 못해도 곁에 있는 것 — 그것이 어쩌면 진짜 사랑의 형태일지도 모른다는 생각이 들었다.
+
+곤이라는 캐릭터가 특히 좋았다. 거칠고 폭력적이지만, 그 안에 깊은 상처와 외로움이 있다. 작가는 그를 단순한 악역으로 만들지 않는다. 독자는 곤이가 왜 그렇게 됐는지를 조금씩 알아가면서, 판단 대신 이해를 선택하게 된다. 그 선택이 독자를 조금 더 나은 사람으로 만드는 것 같았다.
+
+이 책은 청소년 소설로 분류되지만, 어른이 읽어도 충분히 무겁고 깊다. 마지막 장면에서 눈물이 났다. 그것도 한 번이 아니라 두 번. 감정을 모르는 소년이 쓴 이야기가, 내 감정을 가장 많이 건드렸다는 아이러니가 오래 남는다.`,
+          rating: 5,
+          likes: 47,
+          createdAt: '2026-05-26T15:30:00.000Z'
+        },
+        {
+          id: 'seed_3',
+          bookKey: '82년생 김지영',
+          bookTitle: '82년생 김지영',
+          bookThumbnail: '',
+          bookAuthor: '조남주',
+          nickname: '마린북스',
+          title: '이 소설은 소설이 아니다',
+          content: `이 책이 왜 이렇게 논란이 됐는지, 읽고 나서 이해했다. 불편하기 때문이다. 하지만 그 불편함은 소설이 만들어낸 것이 아니라, 현실이 만들어낸 것이다. 조남주는 그 현실을 소설의 언어로 기록했을 뿐이다.
+
+김지영의 삶은 극적이지 않다. 그녀는 불행한 가정에서 태어나지도 않았고, 특별히 가혹한 상황에 처하지도 않았다. 그냥, 평범하게 산다. 학교 다니고, 취직하고, 연애하고, 결혼하고, 아이를 낳는다. 그런데 그 '평범함'의 모든 순간에 아주 작은 불평등들이 쌓인다. 그리고 그 작은 것들이 쌓이고 쌓여서 결국 한 사람을 무너뜨린다.
+
+가장 인상 깊었던 건 엄마의 이야기였다. 엄마가 포기한 꿈, 엄마가 당연하게 여긴 희생 — 그것이 딸에게도, 그 딸의 딸에게도 이어지는 구조. 조남주는 그 구조를 화내며 고발하지 않는다. 담담하게, 그냥 사실처럼 쓴다. 그래서 더 아프다.
+
+통계와 사례를 소설 속에 녹여내는 방식도 독특하다. 그냥 이야기 같은데 사실이고, 사실 같은데 이야기다. 책을 다 읽고 나서 주변 여성들의 이야기가 다르게 들렸다. 그것만으로도 이 책은 충분히 가치 있다.`,
+          rating: 5,
+          likes: 58,
+          createdAt: '2026-05-25T11:20:00.000Z'
+        },
+        {
+          id: 'seed_4',
+          bookKey: '불편한 편의점',
+          bookTitle: '불편한 편의점',
+          bookThumbnail: '',
+          bookAuthor: '김호연',
+          nickname: '독서중인태양',
+          title: '편의점이라는 세계, 독고씨라는 사람',
+          content: `표지가 귀여워서 가볍게 집어들었다가, 생각보다 훨씬 따뜻하고 묵직한 내용에 놀랐다. 편의점이라는 공간이 이렇게 많은 이야기를 담을 수 있다는 게 신기했다.
+
+독고씨는 노숙자다. 인자한 편의점 사장 염 여사의 우연한 도움으로 편의점 야간 알바를 하게 된다. 그가 술도 마시지 않고, 핸드폰도 없고, 과거를 묻지도 않는 이유가 소설 내내 천천히 밝혀진다. 그 과정이 급하지 않고, 조용하고, 아름답다. 뭔가를 숨기고 있다는 사실이 그를 미스터리하게 만드는데, 그 미스터리가 풀릴 때 슬프지 않고 오히려 따뜻하다.
+
+편의점에 오는 손님들 하나하나가 모두 이야기를 가지고 있다. 그들과 독고씨의 짧은 교류들이 쌓이면서, 독고씨가 변하는 것인지 손님들이 변하는 것인지 모르게 모두가 조금씩 나아진다. 그 변화가 드라마틱하지 않아서 더 믿음직스럽다.
+
+한국 소설에서 이렇게 순수하게 따뜻한 이야기를 읽기가 드물다. 무겁고 세련된 문학도 좋지만, 가끔은 이런 소설이 더 필요하다. 읽고 나서 편의점 직원분께 더 친절하게 인사하게 됐다.`,
+          rating: 4,
+          likes: 23,
+          createdAt: '2026-05-24T20:05:00.000Z'
+        },
+        {
+          id: 'seed_5',
+          bookKey: '달러구트 꿈 백화점',
+          bookTitle: '달러구트 꿈 백화점',
+          bookThumbnail: '',
+          bookAuthor: '이미예',
+          nickname: 'book_heeju',
+          title: '꿈을 파는 곳에서 만난 인간의 이야기',
+          content: `자기 전에 읽기 딱 좋은 책이라는 평을 듣고 집어들었다. 그 말이 맞다. 단, 잠을 자려고 읽기 시작했다가 결국 다 읽고 나서야 잠든다는 점에서.
+
+달러구트 꿈 백화점은 사람들이 잠든 사이 찾아오는 꿈을 판다. 백화점 직원 페니는 새로운 곳에서 일을 시작하며 꿈을 만드는 제작자들과 꿈을 사러 오는 손님들을 만난다. 각 챕터마다 독립된 이야기들이 옴니버스 형식으로 이어지는데, 그 중 몇몇은 읽다가 멈추게 만든다.
+
+가장 기억에 남는 건 마지막 꿈을 선택하는 장면이었다. 죽음을 앞둔 사람이 어떤 꿈을 고르는지 — 그것이 그 사람의 삶 전체를 요약한다는 설정이 너무 아름다웠다. 슬프지만 따뜻한 결말에 새벽 두 시에 혼자 울었다. 눈물의 질감이 달랐다. 슬퍼서 우는 게 아니라, 인간이라는 존재가 아름다워서 우는 그런 종류의 눈물이었다.
+
+이 소설의 가장 큰 미덕은 '상상력을 진지하게 다룬다'는 것이다. 꿈이라는 소재를 가볍게 쓰지 않고, 그 안에 욕망과 슬픔과 그리움을 담는다. 판타지지만 판타지가 아닌 것 같은, 그 경계에서 독자를 오래 머물게 한다.`,
+          rating: 5,
+          likes: 39,
+          createdAt: '2026-05-23T22:45:00.000Z'
+        },
+        {
+          id: 'seed_6',
+          bookKey: '소년이 온다',
+          bookTitle: '소년이 온다',
+          bookThumbnail: '',
+          bookAuthor: '한강',
+          nickname: '밤독서가',
+          title: '역사의 한가운데에 선 열다섯 살',
+          content: `소년이 온다는 채식주의자와는 다르게, 역사적 사건을 정면으로 다룬다. 1980년 광주, 5·18 민주화운동. 한강은 그 비극의 한가운데에 소년 동호를 세워놓고, 그를 통해 독자에게 묻는다. 당신이라면 어떻게 했겠냐고.
+
+동호는 열다섯 살이다. 죽은 친구를 찾아 도청에 남는다. 그게 전부다. 거창한 이유도, 영웅적 동기도 없다. 그냥 친구 곁에 있고 싶어서. 그 단순함이 오히려 독자를 더 깊이 끌어당긴다. 역사의 거대한 비극은 결국 이런 작은 사람들의, 작은 선택들로 이루어진다는 것을 소설은 조용히 보여준다.
+
+가장 독특한 건 서술 방식이다. 동호에게 말을 거는 '너'의 시점, 죽은 자의 시점, 산 자의 시점이 번갈아가며 등장한다. 죽은 이들이 자신의 죽음을 바라보는 챕터는 읽기가 고통스럽다. 그 고통이 필요하다고 작가는 말하는 것 같다. 잊지 않기 위해, 기억이 아프게 남아야 한다고.
+
+채식주의자를 먼저 읽은 독자라면 같은 작가의 소설이 맞나 싶을 만큼 결이 다르다. 그러나 둘 다 결국 같은 질문을 한다. 인간이 인간에게 가할 수 있는 것의 한계는 어디인가. 그 질문 앞에서 나는 오래 머물렀다.`,
+          rating: 5,
+          likes: 44,
+          createdAt: '2026-05-22T16:20:00.000Z'
+        },
+        {
+          id: 'seed_7',
+          bookKey: '우리가 빛의 속도로 갈 수 없다면',
+          bookTitle: '우리가 빛의 속도로 갈 수 없다면',
+          bookThumbnail: '',
+          bookAuthor: '김초엽',
+          nickname: '은하수도서관',
+          title: 'SF는 결국 인간에 대한 이야기다',
+          content: `SF를 잘 읽지 않는 편이었다. 과학적 설정이 낯설고, 감정보다 아이디어가 앞서는 것 같아서. 그런데 이 책을 읽고 생각이 완전히 바뀌었다. 김초엽의 SF는 과학이 배경이고, 결국은 인간이 주제다.
+
+표제작 '우리가 빛의 속도로 갈 수 없다면'은 읽는 내내 숨이 막혔다. 우주 이민이 일상이 된 시대, 혼자 남은 한 여성이 더 이상 운항하지 않는 낡은 우주선을 기다린다. 떠나간 가족에게 가기 위해. 빛의 속도로도 닿을 수 없는 거리에서 그녀가 선택한 것은 기다림이었다. 그 기다림이 슬프지 않고 숭고하게 느껴진 건 왜였을까.
+
+수록된 단편들이 모두 고르게 좋다. '감정의 물성'에서는 감정을 물질로 거래하는 세계를, '관내분실'에서는 도서관 AI와 인간의 관계를 통해 기억과 존재의 의미를 탐색한다. 각 이야기가 끝날 때마다 멍하니 천장을 바라보게 됐다.
+
+한국 SF의 수준이 이 정도였나 싶어서 놀랐다. 세계 어느 SF 작품에 내놔도 전혀 부족하지 않다. 김초엽이라는 이름을 기억해두게 만드는 책이다.`,
+          rating: 5,
+          likes: 52,
+          createdAt: '2026-05-21T19:30:00.000Z'
+        }
+        {
+          id: 'seed_8',
+          bookKey: '죽고 싶지만 떡볶이는 먹고 싶어',
+          bookTitle: '죽고 싶지만 떡볶이는 먹고 싶어',
+          bookThumbnail: '',
+          bookAuthor: '백세희',
+          nickname: '새벽세시',
+          title: '이 책이 말하지 않아도 되게 해줬다',
+          content: `정신건강의학과 의사와 환자가 나누는 대화록 형식의 이 책을 처음 펼쳤을 때, '이건 내 얘기인데'라는 생각이 첫 페이지부터 들었다. 기분 부전증이라는, 심각하지도 그렇다고 가볍지도 않은 그 애매한 자리에 있는 감정들. 일상은 돌아가는데 왜 이렇게 공허하고, 죽고 싶다는 말을 입 밖에 꺼내기가 왜 이렇게 어려운지.
+
+저자 백세희는 자신의 치료 과정을 가감 없이 기록한다. 의사 선생님과의 대화가 가끔은 답답하고, 가끔은 위로가 되고, 가끔은 그냥 그래서 어쩌라고 싶다. 그 솔직함이 이 책을 특별하게 만든다. '치유' 이야기가 아니라, '치유되는 중'의 이야기이기 때문이다. 깔끔하게 나아지는 서사가 아니어서 오히려 더 믿음직스럽다.
+
+제목도 좋다. 죽고 싶지만 떡볶이는 먹고 싶다 — 그 모순이 실은 우리 대부분의 일상이 아닌가. 무너지면서도 배고프고, 슬프면서도 좋아하는 드라마를 챙겨보고, 울다가도 웃긴 밈에 실소하는. 이 책은 그 모순을 부끄럽지 않게 만들어준다. 나만 이런 게 아니라는 것, 그것만으로도 이 책은 충분히 가치 있다.`,
+          rating: 5,
+          likes: 42,
+          createdAt: '2026-05-20T14:30:00.000Z'
+        },
+        {
+          id: 'seed_9',
+          bookKey: '언어의 온도',
+          bookTitle: '언어의 온도',
+          bookThumbnail: '',
+          bookAuthor: '이기주',
+          nickname: '활자중독자',
+          title: '말 한마디가 사람을 살리기도, 죽이기도 한다',
+          content: `책을 좋아한다고 생각했는데, 이 책을 읽고 나서야 언어 자체를 좋아한다는 걸 알았다. 이기주의 문장은 어렵지 않다. 하지만 읽다 보면 어느 순간 멈추게 된다. 이 문장 하나가 내가 오래 찾던 말인 것 같아서.
+
+언어의 온도는 말이 가진 힘, 그 따뜻함과 차가움에 대한 에세이다. 위로의 말이 때론 상처가 되고, 아무것도 아닌 말 한마디가 누군가의 하루를 바꾸기도 한다는 것. 작가는 그 섬세한 차이를 조용히, 그러나 또렷하게 써낸다.
+
+기억에 남는 구절이 너무 많아서 줄을 그으며 읽다가 결국 반쯤 밑줄을 그은 채로 다 읽었다. 특히 '말은 뱉고 나면 되돌릴 수 없지만, 그래서 더 아름다울 수 있다'는 대목에서 잠시 책을 내려놓았다. 말을 조심해야 한다는 교훈보다, 말에 더 애정을 가져야겠다는 다짐을 하게 되는 책이다.
+
+글을 쓰는 사람이든, 말하는 게 어려운 사람이든, 누군가에게 전하고 싶은 말이 있는 사람이라면 — 모두에게 권하고 싶다.`,
+          rating: 5,
+          likes: 40,
+          createdAt: '2026-05-19T10:00:00.000Z'
+        }
+      ];
+      if (!_existing.length) { saveAllReviews(_seeds); return; }
+      // 새 시드 누락분 보완
+      ['seed_7','seed_8','seed_9'].forEach(sid => {
+        if (!_existing.find(r => r.id === sid)) {
+          const s = _seeds.find(x => x.id === sid);
+          if (s) _existing.push(s);
+        }
+      });
+      saveAllReviews(_existing);
+    })();
+  </script>
+
+  <!-- ===== [SECTION: comment-system] ===== -->
+  <script>
+    const LS_CMT_KEY = 'booktalk_comments';
+
+    function getAllComments() {
+      try { return JSON.parse(localStorage.getItem(LS_CMT_KEY) || '[]'); } catch { return []; }
+    }
+    function saveAllComments(arr) { localStorage.setItem(LS_CMT_KEY, JSON.stringify(arr)); }
+
+    // ── 댓글 로드 & 렌더 ─────────────────────────────────────────────
+    function loadComments(reviewId) {
+      renderComments(getAllComments().filter(c => c.reviewId === reviewId));
+    }
+
+    function renderComments(comments) {
+      const list = document.getElementById('comments-list');
+      const countEl = document.getElementById('comments-count');
+      if (countEl) countEl.textContent = comments.length;
+      if (!list) return;
+      if (!comments.length) {
+        list.innerHTML = '<div style="padding:28px 0;font-family:var(--serif);font-style:italic;'
+          + 'color:var(--ink-lo);text-align:center;">첫 댓글을 남겨보세요!</div>';
+        return;
+      }
+      const topLevel = comments.filter(c => !c.parentId);
+      const replyMap = {};
+      comments.filter(c => c.parentId).forEach(r => {
+        (replyMap[r.parentId] = replyMap[r.parentId] || []).push(r);
+      });
+
+      function renderOne(c, isReply) {
+        const user = getCurrentUser();
+        const hasLiked = user && (c.likedBy || []).includes(user.id);
+        const d = new Date(c.createdAt);
+        const time = d.toLocaleDateString('ko-KR', {month:'2-digit', day:'2-digit'}).replace(/\.\s*/g,'.')
+          + ' · ' + d.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false});
+        const childReplies = replyMap[c.id] || [];
+        const repliesHtml = childReplies.length
+          ? '<div class="comment-replies">' + childReplies.map(r => renderOne(r, true)).join('') + '</div>'
+          : '';
+        const replyFormHtml = isReply ? '' :
+          '<div id="reply-form-' + c.id + '" class="reply-form" style="display:none">'
+          + '<input id="reply-input-' + c.id + '" type="text" placeholder="답글을 입력하세요…"'
+          + ' onkeydown="if(event.key===\'Enter\')submitReply(\'' + c.id + '\')">'
+          + '<button onclick="submitReply(\'' + c.id + '\')">등록</button></div>';
+        return '<div class="comment-item">'
+          + '<div class="avatar-sm">' + esc((c.nickname||'?').charAt(0)) + '</div>'
+          + '<div class="comment-body" style="flex:1;min-width:0">'
+          + '<div class="comment-author">' + esc(c.nickname||'익명') + '</div>'
+          + '<div class="comment-content">' + esc(c.content) + '</div>'
+          + '<div class="comment-actions">'
+          + '<span class="comment-time">' + time + '</span>'
+          + '<button class="btn-comment-like' + (hasLiked ? ' liked' : '') + '" onclick="toggleCommentLike(\'' + c.id + '\')">'
+          + '❤ <span>' + (c.likes || 0) + '</span></button>'
+          + (isReply ? '' : '<button class="btn-comment-reply" onclick="showReplyForm(\'' + c.id + '\')">답글</button>')
+          + '</div>'
+          + replyFormHtml + repliesHtml
+          + '</div></div>';
+      }
+      list.innerHTML = topLevel.map(c => renderOne(c, false)).join('');
+    }
+
+    // ── 댓글 공감 ─────────────────────────────────────────────────────
+    function toggleCommentLike(commentId) {
+      const user = getCurrentUser();
+      if (!user) { openAuthModal('login'); return; }
+      const all = getAllComments();
+      const idx = all.findIndex(c => c.id === commentId);
+      if (idx === -1) return;
+      const likedBy = all[idx].likedBy || [];
+      const already = likedBy.includes(user.id);
+      all[idx].likedBy = already ? likedBy.filter(id => id !== user.id) : [...likedBy, user.id];
+      all[idx].likes = Math.max(0, (all[idx].likes || 0) + (already ? -1 : 1));
+      saveAllComments(all);
+      loadComments(currentReviewId);
+    }
+
+    // ── 답글 폼 토글 ──────────────────────────────────────────────────
+    function showReplyForm(parentId) {
+      const form = document.getElementById('reply-form-' + parentId);
+      if (!form) return;
+      const visible = form.style.display !== 'none';
+      form.style.display = visible ? 'none' : '';
+      if (!visible) setTimeout(() => document.getElementById('reply-input-' + parentId)?.focus(), 0);
+    }
+
+    // ── 답글 등록 ─────────────────────────────────────────────────────
+    function submitReply(parentId) {
+      const user = getCurrentUser();
+      if (!user) { openAuthModal('login'); return; }
+      const input = document.getElementById('reply-input-' + parentId);
+      const content = input?.value.trim();
+      if (!content) return;
+      const all = getAllComments();
+      all.push({ id: Date.now().toString(), reviewId: currentReviewId, parentId,
+        userId: user.id, nickname: user.nickname, content, likes: 0, likedBy: [],
+        createdAt: new Date().toISOString() });
+      saveAllComments(all);
+      if (input) input.value = '';
+      loadComments(currentReviewId);
+    }
+
+    // ── 댓글 등록 ─────────────────────────────────────────────────────
+    function submitComment() {
+      if (!currentReviewId) return;
+      const user = getCurrentUser();
+      if (!user) { openAuthModal('login'); return; }
+      const contentEl = document.getElementById('comment-content-input');
+      const content = contentEl?.value.trim();
+      if (!content) return;
+      const all = getAllComments();
+      all.push({ id: Date.now().toString(), reviewId: currentReviewId, parentId: null,
+        userId: user.id, nickname: user.nickname, content, likes: 0, likedBy: [],
+        createdAt: new Date().toISOString() });
+      saveAllComments(all);
+      contentEl.value = '';
+      loadComments(currentReviewId);
+    }
+
+    // ── 시드 댓글 주입 ─────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+      if (getAllComments().some(c => c.id.startsWith('scmt_'))) return;
+      const S = (id, rId, pId, nick, text, likes, date) =>
+        ({ id, reviewId:rId, parentId:pId, userId:null, nickname:nick, content:text, likes, likedBy:[], createdAt:date });
+      const seeds = [
+        S('scmt_1_1','seed_1',null,'책벌레','영혜라는 캐릭터가 너무 강렬했어요. 책 다 읽고 며칠 동안 잊히지 않았어요.',4,'2026-05-27T10:30:00.000Z'),
+        S('scmt_1_2','seed_1',null,'밤독자','세 편 중 \'나무 불꽃\'이 제일 좋았어요. 영혜의 선택이 어쩌면 가장 자유로운 형태인 것 같았거든요.',7,'2026-05-27T11:15:00.000Z'),
+        S('scmt_1_3','seed_1','scmt_1_2','독서일기','맞아요, 나무가 되고 싶다는 게 단순한 광기가 아니라 진짜 자유에 대한 갈망인 것 같았어요.',3,'2026-05-27T12:00:00.000Z'),
+        S('scmt_1_4','seed_1',null,'글읽는사람','감정을 직접 설명하지 않는 방식이 낯설었는데 읽다 보니 그게 오히려 더 몰입되더라고요.',5,'2026-05-27T14:20:00.000Z'),
+        S('scmt_2_1','seed_2',null,'서울리더','윤재가 감정 없이 하는 행동들이 오히려 더 감동적이더라고요. 느끼지 못해도 움직이는 게 진짜 사랑이라는 말이 계속 남아요.',6,'2026-05-26T16:40:00.000Z'),
+        S('scmt_2_2','seed_2',null,'재독러','곤이 캐릭터가 처음엔 너무 거칠어서 별로였는데, 읽을수록 그 상처가 보여서 나중엔 가장 마음에 남는 인물이 됐어요.',9,'2026-05-26T18:00:00.000Z'),
+        S('scmt_2_3','seed_2','scmt_2_2','책사랑','맞아요. 단순한 악역이 아니라는 걸 알게 되는 순간이 소설의 핵심인 것 같아요.',4,'2026-05-26T19:10:00.000Z'),
+        S('scmt_3_1','seed_3',null,'지영씨','읽으면서 내 얘기 같아서 계속 멈칫했어요. 너무 현실적이라 오히려 픽션 같지 않았어요.',12,'2026-05-25T12:30:00.000Z'),
+        S('scmt_3_2','seed_3',null,'딸기','엄마 이야기 읽으면서 우리 엄마가 생각났어요. 결국 다 연결된 문제더라고요.',8,'2026-05-25T14:00:00.000Z'),
+        S('scmt_3_3','seed_3',null,'책읽는아빠','통계 삽입 방식이 독특해요. 소설인데 팩트처럼 느껴져서 더 무겁게 다가왔어요.',5,'2026-05-25T15:45:00.000Z'),
+        S('scmt_3_4','seed_3',null,'반성중','남자로서 부끄럽게 읽었어요. 눈앞에서 일어나고 있는 일들을 못 보고 있었구나 싶었어요.',15,'2026-05-25T17:20:00.000Z'),
+        S('scmt_3_5','seed_3',null,'글로벌독자','외국 친구한테 추천했는데 한국어 공부하면서 읽겠다고 해서 뭉클했어요.',11,'2026-05-25T20:00:00.000Z'),
+        S('scmt_3_6','seed_3','scmt_3_5','지영씨','정말요? 그게 얼마나 강렬한 책인지를 증명하는 것 같아요.',3,'2026-05-25T20:45:00.000Z'),
+        S('scmt_4_1','seed_4',null,'사회비평가','독고씨가 아무것도 묻지 않는 태도가 처음엔 신기했는데, 그게 오히려 사람들에게 쉬어갈 공간이 돼주더라고요.',9,'2026-05-24T21:00:00.000Z'),
+        S('scmt_4_2','seed_4',null,'편의점단골','읽고 나서 진짜 편의점 직원분들한테 더 친절하게 인사하게 됐어요 ㅋㅋ',14,'2026-05-24T22:30:00.000Z'),
+        S('scmt_4_3','seed_4',null,'따뜻한독자','한국 소설이 이렇게 순수하게 따뜻할 수 있다는 게 반가웠어요. 염 여사 캐릭터도 너무 좋고.',6,'2026-05-24T23:15:00.000Z'),
+        S('scmt_4_4','seed_4','scmt_4_3','빠른독자','염 여사 정말요! 그 인자함이 억지스럽지 않아서 더 좋았어요.',4,'2026-05-25T00:10:00.000Z'),
+        S('scmt_5_1','seed_5',null,'꿈탐험가','각 챕터마다 다른 손님의 사연이 나오는데, 읽다가 멈추게 만드는 이야기들이 꼭 있어요. 특히 마지막 꿈 고르는 장면은 정말 아름다웠어요.',7,'2026-05-23T23:30:00.000Z'),
+        S('scmt_5_2','seed_5',null,'자기전독서','자기 전에 읽기 좋다고 해서 펼쳤다가 결국 다 읽고 잤어요 ㅋㅋ 페니 캐릭터가 너무 귀여워요.',10,'2026-05-24T00:15:00.000Z'),
+        S('scmt_5_3','seed_5',null,'판타지러버','판타지인데 판타지 같지 않은 느낌? 꿈이라는 소재를 이렇게 따뜻하게 쓸 수 있다는 게 놀라웠어요.',8,'2026-05-24T01:00:00.000Z'),
+        S('scmt_5_4','seed_5','scmt_5_3','새벽독자','맞아요, 설정이 신기한 게 아니라 그 설정 안에 담긴 감정이 진짜인 느낌이었어요.',5,'2026-05-24T09:20:00.000Z'),
+        S('scmt_6_1','seed_6',null,'역사공부','5월 광주에 대해 알고 있다고 생각했는데 이 책 읽고 정말 몰랐다는 걸 알았어요.',13,'2026-05-22T17:30:00.000Z'),
+        S('scmt_6_2','seed_6',null,'무거운독서','너무 힘들어서 두 번씩 내려놓으면서 읽었어요. 근데 꼭 읽어야 할 책이에요.',9,'2026-05-22T19:00:00.000Z'),
+        S('scmt_6_3','seed_6',null,'글쟁이','죽은 자의 시점 챕터가 잊히지 않아요. 그 서술 방식이 너무 충격적이었어요.',11,'2026-05-22T20:30:00.000Z'),
+        S('scmt_6_4','seed_6',null,'한강팬','채식주의자와 같은 작가인지 의심이 갈 정도로 결이 달라요.',6,'2026-05-22T21:45:00.000Z'),
+        S('scmt_6_5','seed_6','scmt_6_4','한강마니아','그게 한강 작가의 대단한 점 같아요. 두 책 다 결이 다른데 둘 다 압도적이에요.',8,'2026-05-22T22:30:00.000Z'),
+        S('scmt_7_1','seed_7',null,'SF입문자','각 단편이 끝날 때마다 멍하니 있게 돼요. SF가 이렇게 따뜻할 수 있나 싶어요.',8,'2026-05-21T20:30:00.000Z'),
+        S('scmt_7_2','seed_7',null,'새벽독자','마지막 꿈을 고르는 장면... 저도 새벽에 혼자 울었어요. 정말 아름다웠어요.',12,'2026-05-21T22:00:00.000Z'),
+        S('scmt_7_3','seed_7',null,'철학적독자','\'관내분실\' 단편이 특히 좋았어요. 기억과 존재에 대한 질문이 오래 남더라고요.',7,'2026-05-21T23:15:00.000Z'),
+        S('scmt_7_4','seed_7','scmt_7_3','도서관파','관내분실 저도 최애예요! 도서관 AI와의 대화가 너무 섬세하게 쓰여 있더라고요.',5,'2026-05-22T00:10:00.000Z'),
+        S('scmt_8_1','seed_8',null,'공감백퍼','이 책 읽으면서 "나만 이런 게 아니구나"라는 생각에 한참 울었어요. 고맙다는 말을 책한테 처음 해봤어요.',11,'2026-05-20T16:00:00.000Z'),
+        S('scmt_8_2','seed_8',null,'밤산책러','기분 부전증이라는 단어를 이 책에서 처음 알았어요. 딱 내 상태 같아서 소름 돋았어요.',8,'2026-05-20T18:30:00.000Z'),
+        S('scmt_8_3','seed_8','scmt_8_2','공감백퍼','맞아요. 심각하지 않아서 말하기도 애매한 그 감정... 이 책이 대신 설명해줬어요.',5,'2026-05-20T19:15:00.000Z'),
+        S('scmt_8_4','seed_8',null,'독서일기장','제목 때문에 가볍게 봤는데 읽고 나서 한동안 멍했어요. 치유 서사가 아닌 "치유 중"의 이야기라는 게 핵심인 것 같아요.',7,'2026-05-21T09:00:00.000Z'),
+        S('scmt_9_1','seed_9',null,'말조심러','읽으면서 평소에 내가 뱉은 말들이 자꾸 떠올랐어요. 반성도 되고, 위로도 됐어요.',9,'2026-05-19T12:00:00.000Z'),
+        S('scmt_9_2','seed_9',null,'밑줄러','밑줄 긋다가 반쯤에서 포기했어요 ㅋㅋㅋ 거의 모든 문장이 건질 만하더라고요.',6,'2026-05-19T14:30:00.000Z'),
+        S('scmt_9_3','seed_9','scmt_9_2','말조심러','진짜ㅋㅋ 전자책으로 읽었는데 하이라이트가 너무 많아서 나중에 찾아보기도 힘들더라고요.',4,'2026-05-19T15:10:00.000Z'),
+      ];
+      const all = getAllComments();
+      saveAllComments([...all, ...seeds]);
+    });
+  </script>
+</body>
+</html>
