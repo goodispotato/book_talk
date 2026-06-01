@@ -390,6 +390,14 @@
       border-bottom:1px solid transparent;
     }
     #page-review-detail .back-link:hover{color:var(--rust);border-bottom-color:var(--rust)}
+    #page-book-detail .back-link{
+      display:inline-flex;align-items:center;gap:6px;
+      font-family:var(--sans);font-size:0.7rem;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;color:var(--ink-lo);
+      margin-bottom:32px;transition:color .15s;cursor:pointer;
+      border-bottom:1px solid transparent;
+    }
+    #page-book-detail .back-link:hover{color:var(--rust);border-bottom-color:var(--rust)}
     #page-review-detail .review-book-chip{
       display:inline-flex;align-items:center;gap:8px;
       font-family:var(--sans);font-size:0.72rem;color:var(--ink-lo);
@@ -980,6 +988,7 @@
     <!-- ===== [SECTION: page-book-detail] ===== -->
     <div id="page-book-detail" class="page">
       <div class="container">
+        <a id="book-detail-back-btn" class="back-link" onclick="goBackFromBookDetail()">← 돌아가기</a>
         <div class="book-hero">
           <div class="book-cover-lg">
             <div class="cover-img" id="book-cover-img">📚</div>
@@ -1207,7 +1216,19 @@
   <!-- ===== [SECTION: router-script] ===== -->
   <script>
     const pageMap={home:'page-home',search:'page-search','book-detail':'page-book-detail','review-detail':'page-review-detail',recommend:'page-ai-recommend',profile:'page-profile','also-read':'page-also-read'};
-    function showPage(n){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const el=document.getElementById(pageMap[n]);if(el){el.classList.add('active');window.scrollTo(0,0);}if(n==='home')renderHomeFeed();if(n==='profile')renderProfile();if(n==='also-read')renderAlsoRead();}
+    let _bookDetailPrevPage=null;
+    function showPage(n){
+      if(n==='book-detail'){
+        const cur=Object.keys(pageMap).find(k=>{const e=document.getElementById(pageMap[k]);return e&&e.classList.contains('active');});
+        if(cur&&cur!=='book-detail'){
+          _bookDetailPrevPage=cur;
+          const btn=document.getElementById('book-detail-back-btn');
+          if(btn){const lbl={home:'홈으로',search:'검색 결과로',recommend:'AI 추천으로',profile:'프로필로','also-read':'이런 책도로','review-detail':'서평으로'};btn.textContent='← '+(lbl[cur]||'돌아가기');}
+        }
+      }
+      document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const el=document.getElementById(pageMap[n]);if(el){el.classList.add('active');window.scrollTo(0,0);}if(n==='home')renderHomeFeed();if(n==='profile')renderProfile();if(n==='also-read')renderAlsoRead();
+    }
+    function goBackFromBookDetail(){showPage(_bookDetailPrevPage||'home');}
     function goToProfile(){if(typeof getCurrentUser==='function'&&getCurrentUser()){showPage('profile');}else{if(typeof openAuthModal==='function')openAuthModal('login');}}
     document.querySelectorAll('.profile-tabs button').forEach((b,i)=>{b.addEventListener('click',()=>{document.querySelectorAll('.profile-tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('profile-tab-reviews').style.display=i===0?'block':'none';document.getElementById('profile-tab-books').style.display=i===1?'block':'none';});});
     document.querySelectorAll('.sort-btns button').forEach(b=>{b.addEventListener('click',()=>{b.closest('.sort-btns').querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');});});
@@ -2240,6 +2261,8 @@
     // ── 슬롯 추가 ────────────────────────────────────────────────────
     // 선택된 책 객체 저장 (슬롯 인덱스 → 카카오 book 객체)
     const selectedAiBooks = {};
+    // AI 추천 결과 카드 책 객체 저장 (카드 클릭 시 상세 이동용)
+    let aiConfirmedBooks = [];
 
     function addAiSlot() {
       const container = document.getElementById('ai-input-slots');
@@ -2464,13 +2487,14 @@
         : '<p style="font-family:var(--serif);font-style:italic;font-size:0.9rem;color:var(--ink-lo);">'
           + '입력하신 책을 분석해서 골라드린 ' + confirmed.length + '권이에요</p>';
 
+      aiConfirmedBooks = confirmed.map(r => r.kakao);
       area.innerHTML = '<div class="results-section-head" style="text-align:center;margin-bottom:32px;">'
         + '<h2 style="font-family:var(--serif);font-size:1.5rem;font-weight:900;margin-bottom:4px;">추천 결과</h2>'
         + note + '</div>'
-        + '<div class="ai-result-grid">' + confirmed.map(makeAiCard).join('') + '</div>';
+        + '<div class="ai-result-grid">' + confirmed.map((r, i) => makeAiCard(r, i)).join('') + '</div>';
     }
 
-    function makeAiCard(r) {
+    function makeAiCard(r, idx) {
       // 카카오 데이터를 정보 출처로 사용 (환각 방지)
       const title  = r.kakao.title;
       const author = (r.kakao.authors || []).join(', ');
@@ -2478,12 +2502,22 @@
         ? '<img src="' + esc(r.kakao.thumbnail) + '" style="width:100%;height:100%;object-fit:cover;border-radius:var(--radius)"/>'
         : '📚';
 
-      return '<div class="card-ai-result">'
+      return '<div class="card-ai-result" onclick="openBookFromAiResult(' + idx + ')">'
         + '<div class="ai-book-cover">' + cover + '</div>'
         + '<div class="ai-book-title">' + esc(title) + '</div>'
         + '<div class="ai-book-author">' + esc(author) + '</div>'
         + '<div class="ai-reason">' + esc(r.reason) + '</div>'
         + '</div>';
+    }
+
+    function openBookFromAiResult(idx) {
+      const book = aiConfirmedBooks[idx];
+      if (!book) return;
+      appState.currentBook = book;
+      renderBookDetail(book);
+      showPage('book-detail');
+      loadBookReviews();
+      initStarInput();
     }
   </script>
 
