@@ -1495,15 +1495,13 @@
       const book = appState.currentBook;
       if (!book) return;
       const key = bookKeyOf(book);
-      // 카카오 API(ISBN key) ↔ 시드(제목 key) 양쪽 모두 매칭
-      const norm = s => String(s || '').replace(/[\s\-·・]/g, '').toLowerCase();
-      const titleNorm = norm(book.title);
       const reviews = getAllReviews().filter(r => {
+        // 1순위: ISBN 기반 exact match (유저가 쓴 서평)
         if (r.bookKey === key) return true;
-        if (!titleNorm) return false;
-        const rKeyNorm   = norm(r.bookKey);
-        const rTitleNorm = norm(r.bookTitle);
-        return rKeyNorm === titleNorm || rTitleNorm === titleNorm;
+        // 2순위: 제목 부분 포함 비교 (시드 서평 ↔ 카카오 API 제목)
+        //   bookMatch는 공백·특수문자 제거 후 한쪽이 다른 쪽을 포함하면 같은 책으로 판단
+        return bookMatch(r.bookKey, book.title) ||
+               bookMatch(r.bookTitle || '', book.title);
       });
       currentReviewList = applySortOrder(reviews, currentSortOrder);
       renderBookReviews(currentReviewList);
