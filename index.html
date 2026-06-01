@@ -1652,11 +1652,32 @@
     }
 
     // ── 서평 상세 → 해당 책 상세 페이지 이동 ────────────────────────
-    function openBookFromReviewDetail() {
+    // appState.currentBook이 localStorage 기반 최소 데이터일 때
+    // 카카오 API로 전체 정보(시놉시스·출판사·장르)를 보강한다.
+    async function openBookFromReviewDetail() {
       if (!appState.currentBook) return;
+
       renderBookDetail(appState.currentBook);
       loadBookReviews();
       showPage('book-detail');
+
+      const book = appState.currentBook;
+      // contents 또는 publisher가 있으면 이미 카카오 API 데이터 → 재요청 불필요
+      if (book.contents || book.publisher) return;
+
+      const query = book.title + (book.authors?.length ? ' ' + book.authors[0] : '');
+      try {
+        const data = await searchKakaoBooks(query, 3);
+        const norm = s => String(s).replace(/\s+/g, '').toLowerCase();
+        const found = (data.documents || []).find(d =>
+          norm(d.title).includes(norm(book.title)) || norm(book.title).includes(norm(d.title))
+        );
+        if (found) {
+          appState.currentBook = found;
+          renderBookDetail(found);
+          loadBookReviews();
+        }
+      } catch { /* API 실패 시 기존 데이터 유지 */ }
     }
   </script>
   <!-- ===== [SECTION: home-profile-render] ===== -->
