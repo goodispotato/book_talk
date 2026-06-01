@@ -284,6 +284,7 @@
       padding:10px 22px;border-radius:var(--radius);transition:border-color .15s;
     }
     .btn-secondary:hover{border-color:var(--ink-mid)}
+    .btn-secondary.active{background:var(--rust-light);border-color:var(--rust);color:var(--rust);}
 
     /* [SECTION: reviews-sort-bar] */
     .reviews-toolbar{
@@ -1000,7 +1001,7 @@
             <div class="book-synopsis" id="book-detail-synopsis"></div>
             <div class="book-actions">
               <button class="btn-write" onclick="openWriteModal(appState.currentBook)">✏ 서평 쓰기</button>
-              <button class="btn-secondary">＋ 읽고 싶어요</button>
+              <button id="btn-wishlist" class="btn-secondary" onclick="toggleWishlist()">＋ 읽고 싶어요</button>
             </div>
           </div>
         </div>
@@ -1093,14 +1094,14 @@
             <div id="profile-join-date" class="join-date">내가 쓴 서평을 모아볼 수 있어요</div>
             <div class="profile-stats">
               <div class="stat-item"><span id="stat-review-count" class="stat-val">0</span><span class="stat-lbl">서평</span></div>
-              <div class="stat-item"><span id="stat-book-count" class="stat-val">0</span><span class="stat-lbl">읽은 책</span></div>
+              <div class="stat-item"><span id="stat-book-count" class="stat-val">0</span><span class="stat-lbl">읽고 싶은 책</span></div>
               <div class="stat-item"><span id="stat-likes-count" class="stat-val">0</span><span class="stat-lbl">받은 공감</span></div>
             </div>
           </div>
         </div>
         <div class="profile-tabs">
           <button class="active">내 서평</button>
-          <button>읽은 책</button>
+          <button>읽고 싶은 책</button>
         </div>
         <div id="profile-tab-reviews">
           <div id="profile-reviews-grid" class="review-feed-grid"></div>
@@ -1380,6 +1381,7 @@
           tagsEl.innerHTML = '';
         }
       }
+      if (typeof updateWishlistButton === 'function') updateWishlistButton();
     }
   </script>
 
@@ -1670,8 +1672,10 @@
         const joined = new Date(user.createdAt).toLocaleDateString('ko-KR', {year:'numeric', month:'long', day:'numeric'});
         setVal('profile-join-date', joined + ' 가입');
       }
+      const wishlistCount = (typeof getWishlist === 'function' && user)
+        ? getWishlist().filter(w => w.userId === user.id).length : 0;
       setVal('stat-review-count', reviews.length);
-      setVal('stat-book-count', uniqueBooks.length);
+      setVal('stat-book-count', wishlistCount);
       setVal('stat-likes-count', totalLikes);
 
       // 내 서평 탭
@@ -1683,39 +1687,57 @@
             + 'color:var(--ink-lo);text-align:center;">아직 작성한 서평이 없어요.</div>';
       }
 
-      // 읽은 책 탭 (서평 쓴 책들)
+      // 읽고 싶은 책 탭
       const bookGrid = document.getElementById('profile-books-grid');
       if (bookGrid) {
-        bookGrid.innerHTML = uniqueBooks.length
-          ? uniqueBooks.map(r => {
-              const cover = r.bookThumbnail
-                ? '<img src="' + esc(r.bookThumbnail) + '" alt=""/>'
+        const wishlist = (typeof getWishlist === 'function' && user)
+          ? getWishlist().filter(w => w.userId === user.id) : [];
+        bookGrid.innerHTML = wishlist.length
+          ? wishlist.map(w => {
+              const cover = w.bookThumbnail
+                ? '<img src="' + esc(w.bookThumbnail) + '" alt=""/>'
                 : '<span style="font-size:2.5rem">📚</span>';
-              return '<div class="card-book" onclick="openBookFromProfile(\'' + esc(r.bookKey) + '\')">'
+              return '<div class="card-book" onclick="openBookFromProfile(\'' + esc(w.bookKey) + '\')">'
                 + '<div class="book-cover-wrap">' + cover + '</div>'
-                + '<div class="book-title">' + esc(r.bookTitle) + '</div>'
-                + '<div class="book-author">' + esc(r.bookAuthor) + '</div>'
+                + '<div class="book-title">' + esc(w.bookTitle) + '</div>'
+                + '<div class="book-author">' + esc(w.bookAuthor) + '</div>'
                 + '</div>';
             }).join('')
           : '<div style="grid-column:1/-1;padding:40px 0;font-family:var(--serif);font-style:italic;'
-            + 'color:var(--ink-lo);text-align:center;">서평을 쓴 책이 여기에 표시돼요.</div>';
+            + 'color:var(--ink-lo);text-align:center;">읽고 싶은 책이 여기에 표시돼요.<br>'
+            + '<span style="font-size:0.85rem;">책 상세 페이지에서 ＋ 읽고 싶어요 버튼을 눌러 추가해보세요.</span></div>';
       }
     }
 
-    // 프로필 '읽은 책' 탭에서 책 클릭 → 해당 책 서평 목록 열기
+    // 프로필 탭에서 책 클릭 → 해당 책 상세 페이지 열기
     function openBookFromProfile(bookKey) {
       const review = getAllReviews().find(r => r.bookKey === bookKey);
-      if (!review) return;
-      // 검색 없이 책 상세 진입: 가상 book 객체 복원
-      appState.currentBook = {
-        title: review.bookTitle,
-        authors: [review.bookAuthor],
-        publisher: '',
-        thumbnail: review.bookThumbnail,
-        isbn: bookKey,
-        contents: '',
-        category_name: ''
-      };
+      if (review) {
+        appState.currentBook = {
+          title: review.bookTitle,
+          authors: [review.bookAuthor],
+          publisher: '',
+          thumbnail: review.bookThumbnail,
+          isbn: bookKey,
+          contents: '',
+          category_name: ''
+        };
+      } else {
+        // 서평 없는 위시리스트 책 처리
+        const user = getCurrentUser();
+        const w = (typeof getWishlist === 'function' && user)
+          ? getWishlist().find(x => x.userId === user.id && x.bookKey === bookKey) : null;
+        if (!w) return;
+        appState.currentBook = {
+          title: w.bookTitle,
+          authors: w.bookAuthor ? [w.bookAuthor] : [],
+          publisher: '',
+          thumbnail: w.bookThumbnail || '',
+          isbn: bookKey,
+          contents: '',
+          category_name: ''
+        };
+      }
       renderBookDetail(appState.currentBook);
       showPage('book-detail');
       loadBookReviews();
@@ -1888,6 +1910,59 @@
           if (doc) { appState.currentBook = doc; renderBookDetail(doc); loadBookReviews(); showPage('book-detail'); }
         }).catch(() => {});
       }
+    }
+  </script>
+
+  <!-- ===== [SECTION: wishlist] ===== -->
+  <script>
+    const LS_WISHLIST = 'booktalk_wishlist';
+
+    function getWishlist() {
+      try { return JSON.parse(localStorage.getItem(LS_WISHLIST) || '[]'); } catch { return []; }
+    }
+    function saveWishlist(arr) { localStorage.setItem(LS_WISHLIST, JSON.stringify(arr)); }
+
+    function toggleWishlist() {
+      const user = getCurrentUser();
+      if (!user) { openAuthModal('login'); return; }
+      const book = appState.currentBook;
+      if (!book) return;
+
+      const key = bookKeyOf(book);
+      const all = getWishlist();
+      const idx = all.findIndex(w => w.userId === user.id && w.bookKey === key);
+
+      if (idx !== -1) {
+        all.splice(idx, 1);
+        showToast('읽고 싶은 책에서 제거됐어요');
+      } else {
+        all.push({
+          userId: user.id,
+          bookKey: key,
+          bookTitle: book.title,
+          bookAuthor: (book.authors || []).join(', '),
+          bookThumbnail: book.thumbnail || '',
+          addedAt: new Date().toISOString()
+        });
+        showToast('읽고 싶은 책에 추가됐어요! ✓');
+      }
+      saveWishlist(all);
+      updateWishlistButton();
+    }
+
+    function updateWishlistButton() {
+      const btn = document.getElementById('btn-wishlist');
+      if (!btn) return;
+      const user = getCurrentUser();
+      const book = appState.currentBook;
+      if (!user || !book) {
+        btn.textContent = '＋ 읽고 싶어요';
+        btn.classList.remove('active');
+        return;
+      }
+      const inList = getWishlist().some(w => w.userId === user.id && w.bookKey === bookKeyOf(book));
+      btn.textContent = inList ? '✓ 읽고 싶어요' : '＋ 읽고 싶어요';
+      btn.classList.toggle('active', inList);
     }
   </script>
 
