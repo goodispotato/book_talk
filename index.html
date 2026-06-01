@@ -399,16 +399,43 @@
       border-bottom:1px solid transparent;
     }
     #page-book-detail .back-link:hover{color:var(--rust);border-bottom-color:var(--rust)}
-    #page-review-detail .review-book-chip{
-      display:inline-flex;align-items:center;gap:8px;
-      font-family:var(--sans);font-size:0.72rem;color:var(--ink-lo);
-      background:var(--ivory-dark);border:1px solid var(--border);
-      border-radius:var(--radius);padding:5px 12px;margin-bottom:20px;
+    #page-review-detail .review-book-card{
+      display:flex;align-items:center;gap:18px;
+      padding:16px 20px;background:var(--white);
+      border:1px solid var(--border);border-radius:var(--radius-md);
+      margin-bottom:28px;cursor:pointer;
+      transition:box-shadow .15s,transform .15s;
     }
-    .book-chip-thumb{
-      width:20px;height:28px;border-radius:2px;
+    #page-review-detail .review-book-card:hover{
+      box-shadow:var(--shadow-md);transform:translateY(-1px);
+    }
+    .review-book-card-thumb{
+      width:60px;height:86px;border-radius:var(--radius);
+      object-fit:cover;border:1px solid var(--border);flex-shrink:0;
+    }
+    .review-book-card-thumb-ph{
+      width:60px;height:86px;border-radius:var(--radius);flex-shrink:0;
       background:var(--ivory-mid);border:1px solid var(--border);
-      display:flex;align-items:center;justify-content:center;font-size:0.65rem;
+      display:flex;align-items:center;justify-content:center;font-size:2rem;
+    }
+    .review-book-card-info{flex:1;min-width:0;}
+    .review-book-card-label{
+      font-family:var(--sans);font-size:0.65rem;font-weight:700;
+      letter-spacing:.12em;text-transform:uppercase;color:var(--ink-lo);margin-bottom:5px;
+    }
+    .review-book-card-title{
+      font-family:var(--serif);font-size:1.1rem;font-weight:700;
+      color:var(--ink);line-height:1.3;margin-bottom:4px;
+    }
+    .review-book-card-author{
+      font-family:var(--sans);font-size:0.78rem;color:var(--ink-mid);
+    }
+    .review-book-card-arrow{
+      font-family:var(--sans);font-size:0.85rem;color:var(--ink-xlo);
+      flex-shrink:0;transition:color .15s,transform .15s;display:inline-block;
+    }
+    #page-review-detail .review-book-card:hover .review-book-card-arrow{
+      color:var(--ink-mid);transform:translateX(3px);
     }
     #page-review-detail .review-full-title{
       font-family:var(--serif);font-size:2.4rem;font-weight:900;
@@ -1016,7 +1043,7 @@
     <div id="page-review-detail" class="page">
       <div class="container-narrow">
         <a id="review-detail-back-btn" class="back-link" onclick="goBackFromReviewDetail()">← 책으로 돌아가기</a>
-        <div id="review-detail-book-chip" class="review-book-chip"></div>
+        <div id="review-detail-book-chip"></div>
         <h1 id="review-detail-title" class="review-full-title"></h1>
         <hr class="review-rule"/>
         <div class="review-meta-row">
@@ -1562,12 +1589,19 @@
       const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
       const setHtml = (id, val) => { const el=document.getElementById(id); if(el) el.innerHTML=val; };
 
-      const thumb = r.bookThumbnail
-        ? '<img src="' + esc(r.bookThumbnail) + '" style="width:100%;height:100%;object-fit:cover;border-radius:2px"/>'
-        : '📚';
+      const thumbHtml = r.bookThumbnail
+        ? '<img src="' + esc(r.bookThumbnail) + '" class="review-book-card-thumb" alt=""/>'
+        : '<div class="review-book-card-thumb-ph">📚</div>';
       setHtml('review-detail-book-chip',
-        '<div class="book-chip-thumb">' + thumb + '</div>'
-        + '<span>' + esc(r.bookTitle) + ' · ' + esc(r.bookAuthor) + '</span>');
+        '<div class="review-book-card" onclick="openBookFromReviewDetail()">'
+        + thumbHtml
+        + '<div class="review-book-card-info">'
+        + '<div class="review-book-card-label">이 서평의 도서</div>'
+        + '<div class="review-book-card-title">' + esc(r.bookTitle) + '</div>'
+        + '<div class="review-book-card-author">' + esc(r.bookAuthor) + '</div>'
+        + '</div>'
+        + '<div class="review-book-card-arrow">→</div>'
+        + '</div>');
 
       set('review-detail-title', r.title);
       setHtml('review-detail-stars', Array.from({length:5}, (_,i) =>
@@ -1615,6 +1649,14 @@
 
       saveAllReviews(all);
       document.getElementById('review-detail-like-count').textContent = all[idx].likes;
+    }
+
+    // ── 서평 상세 → 해당 책 상세 페이지 이동 ────────────────────────
+    function openBookFromReviewDetail() {
+      if (!appState.currentBook) return;
+      renderBookDetail(appState.currentBook);
+      loadBookReviews();
+      showPage('book-detail');
     }
   </script>
   <!-- ===== [SECTION: home-profile-render] ===== -->
@@ -2476,8 +2518,8 @@
       }
 
       const list = books.map((b, i) => (i + 1) + '. ' + b).join('\n');
-      const prompt = '다음 책들을 재미있게 읽은 독자에게 비슷한 분위기·주제의 한국 출판 도서 6권을 추천해주세요. 분위기나 주제는 책의 설명을 참고하세요.\n'
-        + '혹은 같은 작가가 쓴 책을 추천해주세요.:\n'
+      const prompt = '다음 책들을 재미있게 읽은 독자에게 비슷한 분위기·주제의 한국 출판 도서 6권을 추천해주세요.\n'
+        + '같은 작가의 다른 작품이나, 비슷한 장르·분위기의 책을 포함해도 좋습니다.\n'
         + '반드시 실제로 한국에서 출판되어 서점에서 구매 가능한 책만 추천하세요. 존재하지 않는 책은 절대 포함하지 마세요.\n\n'
         + list + '\n\n'
         + '반드시 아래 JSON 배열 형식으로만 응답하세요. 다른 텍스트 없이 JSON만 출력하세요:\n'
