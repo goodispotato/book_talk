@@ -1634,6 +1634,11 @@
       const idx = all.findIndex(r => r.id === currentReviewId);
       if (idx === -1) return;
 
+      if (all[idx].userId && all[idx].userId === user.id) {
+        showToast('내가 쓴 서평에는 공감할 수 없어요 😅');
+        return;
+      }
+
       const likedBy = all[idx].likedBy || [];
       const alreadyLiked = likedBy.includes(user.id);
 
@@ -3052,6 +3057,11 @@
       const all = getAllComments();
       const idx = all.findIndex(c => c.id === commentId);
       if (idx === -1) return;
+
+      if (all[idx].userId && all[idx].userId === user.id) {
+        showToast('내가 쓴 댓글에는 공감할 수 없어요 😅');
+        return;
+      }
       const likedBy = all[idx].likedBy || [];
       const already = likedBy.includes(user.id);
       all[idx].likedBy = already ? likedBy.filter(id => id !== user.id) : [...likedBy, user.id];
