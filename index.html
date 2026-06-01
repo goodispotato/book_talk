@@ -1014,7 +1014,7 @@
     <!-- ===== [SECTION: page-review-detail] ===== -->
     <div id="page-review-detail" class="page">
       <div class="container-narrow">
-        <a class="back-link" onclick="showPage('book-detail')">← 책으로 돌아가기</a>
+        <a id="review-detail-back-btn" class="back-link" onclick="goBackFromReviewDetail()">← 책으로 돌아가기</a>
         <div id="review-detail-book-chip" class="review-book-chip"></div>
         <h1 id="review-detail-title" class="review-full-title"></h1>
         <hr class="review-rule"/>
@@ -1217,6 +1217,7 @@
   <script>
     const pageMap={home:'page-home',search:'page-search','book-detail':'page-book-detail','review-detail':'page-review-detail',recommend:'page-ai-recommend',profile:'page-profile','also-read':'page-also-read'};
     let _bookDetailPrevPage=null;
+    let _reviewDetailPrevPage=null;
     function showPage(n){
       if(n==='book-detail'){
         const cur=Object.keys(pageMap).find(k=>{const e=document.getElementById(pageMap[k]);return e&&e.classList.contains('active');});
@@ -1229,6 +1230,7 @@
       document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const el=document.getElementById(pageMap[n]);if(el){el.classList.add('active');window.scrollTo(0,0);}if(n==='home')renderHomeFeed();if(n==='profile')renderProfile();if(n==='also-read')renderAlsoRead();
     }
     function goBackFromBookDetail(){showPage(_bookDetailPrevPage||'home');}
+    function goBackFromReviewDetail(){showPage(_reviewDetailPrevPage||'book-detail');}
     function goToProfile(){if(typeof getCurrentUser==='function'&&getCurrentUser()){showPage('profile');}else{if(typeof openAuthModal==='function')openAuthModal('login');}}
     document.querySelectorAll('.profile-tabs button').forEach((b,i)=>{b.addEventListener('click',()=>{document.querySelectorAll('.profile-tabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById('profile-tab-reviews').style.display=i===0?'block':'none';document.getElementById('profile-tab-books').style.display=i===1?'block':'none';});});
     document.querySelectorAll('.sort-btns button').forEach(b=>{b.addEventListener('click',()=>{b.closest('.sort-btns').querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');});});
@@ -1522,6 +1524,19 @@
       const review = getAllReviews().find(r => r.id === id);
       if (!review) return;
       currentReviewId = id;
+
+      // 진입 경로 추적 — 뒤로가기 버튼 목적지 및 텍스트 결정
+      const cur = Object.keys(pageMap).find(k => {
+        const e = document.getElementById(pageMap[k]);
+        return e && e.classList.contains('active');
+      });
+      _reviewDetailPrevPage = cur || 'book-detail';
+      const backBtn = document.getElementById('review-detail-back-btn');
+      if (backBtn) {
+        const lbl = {'book-detail':'← 책으로 돌아가기', 'home':'← 인기 서평으로', 'profile':'← 내 서평으로'};
+        backBtn.textContent = lbl[_reviewDetailPrevPage] || '← 돌아가기';
+      }
+
       // 뒤로가기 시 book-detail이 해당 책을 보여줄 수 있도록 currentBook 설정
       if (!appState.currentBook || appState.currentBook.title !== review.bookTitle) {
         appState.currentBook = {
