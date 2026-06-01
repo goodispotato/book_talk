@@ -1823,18 +1823,21 @@
     async function enrichSeedThumbnails() {
       const needs = getAllReviews().filter(r => r.id.startsWith('seed_') && !r.bookThumbnail);
       if (!needs.length) return;
-      let changed = false;
       for (const r of needs) {
         try {
           const data = await searchKakaoBooks(r.bookTitle + ' ' + r.bookAuthor, 1);
           const found = data.documents?.[0];
-          if (found?.thumbnail) { r.bookThumbnail = found.thumbnail; changed = true; }
-        } catch { /* API 키 미설정 시 무시 */ }
+          if (!found?.thumbnail) continue;
+          // 한 권씩 즉시 저장 & 피드 갱신 — 중간에 이탈해도 진행분은 보존
+          const all = getAllReviews();
+          const item = all.find(x => x.id === r.id);
+          if (item && !item.bookThumbnail) {
+            item.bookThumbnail = found.thumbnail;
+            saveAllReviews(all);
+            renderHomeFeed();
+          }
+        } catch { /* API 실패 시 해당 권만 건너뜀 */ }
       }
-      if (!changed) return;
-      const all = getAllReviews().map(r => needs.find(n => n.id === r.id) || r);
-      saveAllReviews(all);
-      renderHomeFeed();
     }
 
     // 페이지 최초 로드 시 홈 피드 초기화
